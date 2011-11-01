@@ -2,7 +2,7 @@
 from django.db import models
 
 from lizard_area.models import Area
-from lizard_fewsnorm import TimeSeriesKeys
+from lizard_fewsnorm.models import TimeseriesKeys
 
 
 class NameAbstract(models.Model):
@@ -17,45 +17,54 @@ class NameAbstract(models.Model):
     def __unicode__(self):
         return self.name
 
-class ConfigurationType(NameAbstract)
+class ConfigurationType(NameAbstract):
     """
     Type of waterbalanceconfiguration
     """
     pass
 
 
-class ValueType(NameAbstract)
+class ValueType(NameAbstract):
     """
     Type of value
     """
     pass
 
 
-class Configuration(models.Model)
+class Configuration(models.Model):
     """
     Waterbalanceconfiguration.
     """
     name = models.CharField(max_length=128)
     code = models.CharField(max_length=128)
-    parent = models.ForeignKey('Category', blank=True, null=True)
+    parent = models.ForeignKey('self', blank=True, null=True)
     short_name = models.CharField(max_length=128)
     source_name = models.CharField(max_length=128)
     configuration_type = models.ForeignKey(ConfigurationType)
 
-    default_parameter_code_manual_fews =  models.CharField(max_length=128)
+    default_parameter_code_manual_fews = models.CharField(max_length=128)
     default_parameter_code_automatic_fews = models.CharField(max_length=128)
     default_parameter_code_final_fews = models.CharField(max_length=128)
-    value_type = models.ForeignKey(valueType)
+    value_type = models.ForeignKey(ValueType)
 
 
-class AreaConfiguration(models.Model)
+class AreaConfiguration(models.Model):
     """
     Areaconfiguration.
     """
-    area = models.ForeignKey(Area)
-    configuration = models.ForeignKey(Configuration)
+    area = models.ForeignKey(Area, related_name='esf_areaconfiguration_set')
+    configuration = models.ForeignKey(Configuration, related_name='esf_areaconfiguration_set')
     manual = models.BooleanField()
-    manual_value = models.DecimalField()
-    timeseries_manual = models.ForeignKey(TimeSeriesKeys)
-    timeseries_automatic = models.ForeignKey(TimeSeriesKeys)
-    timeseries_final_value = models.ForeignKey(TimeSeriesKeys)
+    manual_value = models.DecimalField(max_digits=15, decimal_places=6)
+    timeseries_manual = models.ForeignKey(
+        TimeseriesKeys,
+        related_name='esf_areaconfiguration_set1',
+    )
+    timeseries_automatic = models.ForeignKey(
+        TimeseriesKeys,
+        related_name='esf_areaconfiguration_set2',
+    )
+    timeseries_final_value = models.ForeignKey(
+        TimeseriesKeys,
+        related_name='esf_areaconfiguration_set3',
+    )
