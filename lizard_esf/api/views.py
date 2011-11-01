@@ -5,7 +5,10 @@ from django.core.urlresolvers import reverse
 
 from djangorestframework.views import View
 
+from lizard_esf.models import ConfigurationType
+from lizard_esf.models import ValueType
 from lizard_esf.models import Configuration
+from lizard_esf.models import AreaConfiguration
 
 
 class RootView(View):
@@ -14,8 +17,14 @@ class RootView(View):
     """
     def get(self, request):
          return {
+            "configuration types": reverse(
+                'lizard_esf_api_configuration_type_root'),
+            "value types": reverse(
+                'lizard_esf_api_value_type_root'),
             "configurations": reverse(
                 'lizard_esf_api_configuration_root'),
+            "area configurations": reverse(
+                'lizard_esf_api_area_configuration_root'),
             }
 
 
@@ -34,8 +43,29 @@ class DocumentRootView(View):
 for d in self.document.objects.all()]
 
 
+class ConfigurationTypeRootView(DocumentRootView):
+    """
+    View all configuration types.
+    """
+    document = ConfigurationType
+
+
+class ValueTypeRootView(DocumentRootView):
+    """
+    View all value types.
+    """
+    document = ValueType
+
+
 class ConfigurationRootView(DocumentRootView):
     """
-    View all annotations.
+    View all configurations.
     """
     document = Configuration
+
+
+class AreaConfigurationRootView(DocumentRootView):
+    """
+    View all area configurations.
+    """
+    document = AreaConfiguration

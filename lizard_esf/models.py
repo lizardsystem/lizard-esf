@@ -1,9 +1,19 @@
 # (c) Nelen & Schuurmans.  GPL licensed, see LICENSE.txt.
+import re
+
 from django.db import models
+
+from django.core.urlresolvers import reverse
 
 from lizard_area.models import Area
 from lizard_fewsnorm.models import TimeseriesKeys
 
+
+def uncamel(model_name):
+    """
+    Convert some model name into an underscore-style name.
+    """
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', model_name).lower()
 
 class NameAbstract(models.Model):
     """
@@ -13,9 +23,22 @@ class NameAbstract(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ['id']
 
     def __unicode__(self):
         return self.name
+
+#   def get_absolute_url(self):
+#   """
+#   Return absolute url for use in api.
+
+#   Convenient when creating manual listviews; djangorestframework does
+#   so automatically.
+#   """
+#       return reverse('lizard_esf_api_' +
+#                      uncamel(self.__class__.__name__),
+#                      kwargs={'pk': self.pk})
+        
 
 class ConfigurationType(NameAbstract):
     """
