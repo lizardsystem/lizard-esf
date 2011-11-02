@@ -5,7 +5,6 @@ from djangorestframework.resources import ModelResource
 
 from lizard_esf.models import ConfigurationType
 from lizard_esf.models import ValueType
-from lizard_esf.models import Configuration
 from lizard_esf.models import AreaConfiguration
 
 
@@ -22,14 +21,6 @@ class ValueTypeResource(ModelResource):
     ValueTypeResource
     """
     model = ValueType
-    fields = ()
-
-
-class ConfigurationResource(ModelResource):
-    """
-    ConfigurationResource
-    """
-    model = Configuration
     fields = ()
 
 
