@@ -73,6 +73,8 @@ class Configuration(MP_Node):
     default_parameter_code_final_fews = models.CharField(max_length=128)
     value_type = models.ForeignKey(ValueType)
 
+    expanded = models.BooleanField(default=False)
+
     node_order_by = ['name']
 
     def __unicode__(self):

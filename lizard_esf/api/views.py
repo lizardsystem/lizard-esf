@@ -44,7 +44,7 @@ class RootView(View):
                 'lizard_esf_api_value_type_root'),
         }, {
             'tree': reverse(
-                'lizard_esf_api_tree'),
+                'lizard_esf_api_configuration_tree'),
         }]
 
 
@@ -59,8 +59,7 @@ class ConfigurationCreateView(View):
     form = ConfigurationForm
 
     def get(self, request):
-        return Configuration.dump_bulk()
-        pass
+        return Response(status.HTTP_200_OK)
 
     def put(self, request):
         parent = self.CONTENT['parent']
@@ -77,6 +76,9 @@ class ConfigurationCreateView(View):
 
 
 class ConfigurationDetailView(View):
+    """
+    Configuration details
+    """
     pass
 
 
