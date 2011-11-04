@@ -81,6 +81,7 @@ class Configuration(MP_Node):
         return self.name
 
 
+
 class AreaConfiguration(models.Model):
     """
     Areaconfiguration.
@@ -90,17 +91,77 @@ class AreaConfiguration(models.Model):
         Configuration,
         related_name='esf_areaconfiguration_set',
     )
-    manual = models.BooleanField()
-    manual_value = models.DecimalField(max_digits=15, decimal_places=6)
-    timeseries_manual = models.ForeignKey(
-        TimeseriesKeys,
-        related_name='esf_areaconfiguration_set1',
-    )
-    timeseries_automatic = models.ForeignKey(
-        TimeseriesKeys,
-        related_name='esf_areaconfiguration_set2',
-    )
-    timeseries_final_value = models.ForeignKey(
-        TimeseriesKeys,
-        related_name='esf_areaconfiguration_set3',
-    )
+    manual = models.IntegerField(default=1)
+    manual_value = models.DecimalField(max_digits=15, decimal_places=1, default=-999)
+
+    last_edit_by = models.CharField(max_length=256, blank=True, default='-')
+    last_edit_date = models.DateTimeField(auto_now=True)
+    last_comment = models.CharField(max_length=256, blank=True, default='-')
+
+#    timeseries_manual = models.ForeignKey(
+#        TimeseriesKeys,
+#        related_name='esf_areaconfiguration_set1',
+#    )
+#    timeseries_automatic = models.ForeignKey(
+#        TimeseriesKeys,
+#        related_name='esf_areaconfiguration_set2',
+#    )
+#    timeseries_final_value = models.ForeignKey(
+#        TimeseriesKeys,
+#        related_name='esf_areaconfiguration_set3',
+#    )
+
+    def get_mydump(self):
+        return {
+            'id': self.id,
+            'config_id': self.configuration.id,
+            'name': self.configuration.name,
+            'source_name': self.configuration.source_name,
+            'manual': self.manual,
+            'manual_value': self.manual_value,
+            'auto_value': 2,
+            'type': self.configuration.value_type.name,
+            'last_comment': 'ja ja ja'
+        }
+
+def tree(config):
+    a = {}
+    for b in config:
+        if b.configuration.get_parent():
+            parent_id = b.configuration.get_parent().id
+        else:
+            parent_id = None
+            pass
+        config_id = b.configuration.id
+
+        if not a.has_key(parent_id):
+            a[parent_id] = []
+        if not a.has_key(config_id):
+            a[config_id] = []
+        a[parent_id].append(b.get_mydump())
+
+
+    tree = {'id':-1, 'name': 'root'}
+
+    tree['children'] = a[None]
+
+    for child in tree['children']:
+
+        child['children'] = a[child['config_id']]
+
+        for child_1 in child['children']:
+            child_1['children'] = a[child_1['config_id']]
+
+            for child_2 in child_1['children']:
+                child_2['children'] = a[child_2['config_id']]
+
+                for child_3 in child_2['children']:
+                    child_3['children'] = a[child_3['config_id']]
+
+    return tree
+
+
+
+
+
+

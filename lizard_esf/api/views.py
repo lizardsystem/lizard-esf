@@ -4,14 +4,21 @@ API views not coupled to models.
 """
 
 from django.core.urlresolvers import reverse
+import json
 
 from djangorestframework.response import Response
 from djangorestframework import status
 from djangorestframework.views import View
+from djangorestframework.parsers import JSONParser
 
 from lizard_esf.models import Configuration
+from lizard_esf.models import AreaConfiguration
+from lizard_esf.models import tree
 
 from lizard_esf.forms import ConfigurationForm
+
+from lizard_area.models import Area
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -87,4 +94,32 @@ class ConfigurationTreeView(View):
     Treeview, basically a dump_bulk() from treebeard
     """
     def get(self, request):
-        return Configuration.dump_bulk()
+
+        area = request.GET.get('object_id', None)
+        area = Area.objects.get(ident=area)
+
+        area_config = AreaConfiguration.objects.filter(area=area)
+
+        tree_data = tree(area_config)
+
+
+
+
+        return tree_data
+
+    def post(self, request, pk=None):
+
+        data = json.loads(self.CONTENT.get('data', []))
+        print data
+        if type(data) == dict:
+            data = [data]
+        for record in data:
+            print record
+            print int(record['id'])
+            area_config = AreaConfiguration.objects.get(id=int(record['id']))
+            del record['id']
+            for (key, value) in record.items():
+                setattr(area_config, key, value)
+            area_config.save()
+
+        return {'success': True}
