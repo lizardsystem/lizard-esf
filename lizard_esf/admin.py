@@ -8,5 +8,3 @@ class ConfigurationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Configuration, ConfigurationAdmin)
-
-

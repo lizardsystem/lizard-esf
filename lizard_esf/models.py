@@ -5,12 +5,11 @@ import re
 from django.core.urlresolvers import reverse
 from django.db import models
 
-# from django.core.urlresolvers import reverse
-
 from lizard_area.models import Area
-from lizard_fewsnorm.models import TimeseriesKeys
-
 from treebeard.mp_tree import MP_Node
+
+# from django.core.urlresolvers import reverse
+# from lizard_fewsnorm.models import TimeseriesKeys
 
 
 def uncamel(model_name):
@@ -79,11 +78,13 @@ class Configuration(MP_Node):
     node_order_by = ['name']
 
     def get_absolute_url(self):
-        return reverse('lizard_esf_api_configuration_detail', kwargs={'pk': self.pk})
+        return reverse(
+            'lizard_esf_api_configuration_detail',
+            kwargs={'pk': self.pk},
+        )
 
     def __unicode__(self):
         return self.name
-
 
 
 class AreaConfiguration(models.Model):
@@ -96,8 +97,9 @@ class AreaConfiguration(models.Model):
         related_name='esf_areaconfiguration_set',
     )
     manual = models.IntegerField(default=1)
-    manual_value = models.DecimalField(max_digits=15, decimal_places=1, default=-999)
-
+    manual_value = models.FloatField(
+        blank=True, null=True,
+    )
     last_edit_by = models.CharField(max_length=256, blank=True, default='-')
     last_edit_date = models.DateTimeField(auto_now=True)
     last_comment = models.CharField(max_length=256, blank=True, default='-')
@@ -125,8 +127,9 @@ class AreaConfiguration(models.Model):
             'manual_value': self.manual_value,
             'auto_value': 2,
             'type': self.configuration.value_type.name,
-            'last_comment': 'ja ja ja'
+            'last_comment': 'ja ja ja',
         }
+
 
 def tree(config):
     a = {}
@@ -138,14 +141,13 @@ def tree(config):
             pass
         config_id = b.configuration.id
 
-        if not a.has_key(parent_id):
+        if not parent_id in a:
             a[parent_id] = []
-        if not a.has_key(config_id):
+        if not config_id in a:
             a[config_id] = []
         a[parent_id].append(b.get_mydump())
 
-
-    tree = {'id':-1, 'name': 'root'}
+    tree = {'id': -1, 'name': 'root'}
 
     tree['children'] = a[None]
 
@@ -163,9 +165,3 @@ def tree(config):
                     child_3['children'] = a[child_3['config_id']]
 
     return tree
-
-
-
-
-
-
