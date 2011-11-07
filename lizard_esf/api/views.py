@@ -110,12 +110,9 @@ class ConfigurationTreeView(View):
     def post(self, request, pk=None):
 
         data = json.loads(self.CONTENT.get('data', []))
-        print data
         if type(data) == dict:
             data = [data]
         for record in data:
-            print record
-            print int(record['id'])
             area_config = AreaConfiguration.objects.get(id=int(record['id']))
             del record['id']
             for (key, value) in record.items():
