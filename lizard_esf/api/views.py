@@ -56,6 +56,10 @@ class RootView(View):
 
 
 class ConfigurationListView(View):
+    def get(self, request):
+        configs = Configuration.objects.all()
+        return [(c.name, c.get_absolute_url) for c in configs]
+
     pass
 
 

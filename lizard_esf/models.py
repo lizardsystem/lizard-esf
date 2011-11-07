@@ -2,6 +2,7 @@
 
 import re
 
+from django.core.urlresolvers import reverse
 from django.db import models
 
 # from django.core.urlresolvers import reverse
@@ -76,6 +77,9 @@ class Configuration(MP_Node):
     expanded = models.BooleanField(default=False)
 
     node_order_by = ['name']
+
+    def get_absolute_url(self):
+        return reverse('lizard_esf_api_configuration_detail', kwargs={'pk': self.pk})
 
     def __unicode__(self):
         return self.name
