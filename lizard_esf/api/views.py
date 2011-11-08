@@ -4,7 +4,7 @@ API views not coupled to models.
 """
 
 from django.core.urlresolvers import reverse
-import json
+from django.forms.models import model_to_dict
 
 from djangorestframework.response import Response
 from djangorestframework import status
@@ -19,9 +19,8 @@ from lizard_esf.forms import ConfigurationForm
 
 from lizard_area.models import Area
 
-
 import logging
-logger = logging.getLogger(__name__)
+import json
 
 
 class TreeView(View):
@@ -41,9 +40,9 @@ class RootView(View):
             'configurations': reverse(
                 'lizard_esf_api_configuration_root'),
         }, {
-            'area configurations': reverse(
-                'lizard_esf_api_area_configuration_root'),
-        }, {
+#           'area configurations': reverse(
+#               'lizard_esf_api_area_configuration_root'),
+#       }, {
             'configuration types': reverse(
                 'lizard_esf_api_configuration_type_root'),
         }, {
@@ -90,7 +89,11 @@ class ConfigurationDetailView(View):
     """
     Configuration details
     """
-    pass
+    def get(self, request, pk):
+        cnf = Configuration.objects.get(pk=pk)
+        # Beware, model_to_dict does not include
+        # fields that have editable=False
+        return model_to_dict(cnf, exclude=['path', 'numchild', 'depth'])
 
 
 class ConfigurationTreeView(View):
