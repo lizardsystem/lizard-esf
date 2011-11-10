@@ -9,7 +9,6 @@ from django.forms.models import model_to_dict
 from djangorestframework.response import Response
 from djangorestframework import status
 from djangorestframework.views import View
-from djangorestframework.parsers import JSONParser
 
 from lizard_esf.models import Configuration
 from lizard_esf.models import AreaConfiguration
@@ -19,7 +18,6 @@ from lizard_esf.forms import ConfigurationForm
 
 from lizard_area.models import Area
 
-import logging
 import json
 
 
@@ -108,9 +106,6 @@ class ConfigurationTreeView(View):
         area_config = AreaConfiguration.objects.filter(area=area)
 
         tree_data = tree(area_config)
-
-
-
 
         return tree_data
 
