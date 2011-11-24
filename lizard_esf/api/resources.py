@@ -7,21 +7,23 @@ from lizard_esf.models import ConfigurationType
 from lizard_esf.models import ValueType
 from lizard_esf.models import AreaConfiguration
 
+from lizard_esf.forms import NameForm
+
 
 class ConfigurationTypeResource(ModelResource):
     """
     ConfigurationTypeResource
     """
+    form = NameForm
     model = ConfigurationType
-    fields = ()
 
 
 class ValueTypeResource(ModelResource):
     """
     ValueTypeResource
     """
+    form = NameForm
     model = ValueType
-    fields = ()
 
 
 class AreaConfigurationResource(ModelResource):

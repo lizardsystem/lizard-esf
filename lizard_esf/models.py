@@ -19,7 +19,52 @@ def uncamel(model_name):
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', model_name).lower()
 
 
-class NameAbstract(models.Model):
+class GettersMixin(object):
+    """
+    Provides a get_dict() method and a get_absolute_url() method.
+    """
+    def get_dict(self, url=False, ref_urls=False, ref_objects=False):
+        """
+        Return the fields and their contents as a dict.
+
+        If url=True, add own absolute url, if ref_urls=True, add urls for any
+        referencefields present, if ref_objects, add objects instead of id's
+        for ForeignKeys.
+        """
+        field_names = [field.name for field in self._meta.fields]
+
+        result = dict([(field_name, getattr(self, field_name))
+                       for field_name in field_names])
+        if url:
+            result.update(url=self.get_absolute_url)
+        if ref_urls:
+            result.update([
+                (field_name + '_url',
+                 getattr(self, field_name).get_absolute_url())
+                for field_name in field_names
+                if isinstance(getattr(self, field_name),
+                              models.Model)])
+        if not ref_objects:
+            result.update([
+                (field_name, getattr(self, field_name).pk)
+                for field_name in field_names
+                if isinstance(getattr(self, field_name),
+                              models.Model)])
+        return result
+
+    def get_absolute_url(self):
+        """
+        Return absolute url for use in api.
+
+        Convenient when creating manual listviews; djangorestframework does
+        so automatically when you use the specialized  ModelResourceView.
+        """
+        return reverse('lizard_esf_api_' +
+                       uncamel(self.__class__.__name__),
+                       kwargs={'pk': self.pk})
+
+
+class NameAbstract(models.Model, GettersMixin):
     """
     Abstract model with only a name as property.
     """
@@ -31,17 +76,6 @@ class NameAbstract(models.Model):
 
     def __unicode__(self):
         return self.name
-
-#   def get_absolute_url(self):
-#   """
-#   Return absolute url for use in api.
-
-#   Convenient when creating manual listviews; djangorestframework does
-#   so automatically.
-#   """
-#       return reverse('lizard_esf_api_' +
-#                      uncamel(self.__class__.__name__),
-#                      kwargs={'pk': self.pk})
 
 
 class ConfigurationType(NameAbstract):
@@ -77,11 +111,11 @@ class Configuration(MP_Node):
 
     node_order_by = ['name']
 
-    def get_absolute_url(self):
-        return reverse(
-            'lizard_esf_api_configuration_detail',
-            kwargs={'pk': self.pk},
-        )
+    #def get_absolute_url(self):
+        #return reverse(
+            #'lizard_esf_api_configuration_detail',
+            #kwargs={'pk': self.pk},
+        #)
 
     def __unicode__(self):
         return self.name

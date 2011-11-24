@@ -29,3 +29,10 @@ class ConfigurationForm(forms.Form):
         queryset=Configuration.objects.all(),
         required=False,
     )
+
+
+class NameForm(forms.Form):
+    """Form for editing of models that only have a namefield."""
+    name = forms.CharField(
+        label=ugettext(u'Name'),
+    )
