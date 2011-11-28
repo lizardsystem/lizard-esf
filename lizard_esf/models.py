@@ -111,11 +111,11 @@ class Configuration(MP_Node):
 
     node_order_by = ['name']
 
-    #def get_absolute_url(self):
-        #return reverse(
-            #'lizard_esf_api_configuration_detail',
-            #kwargs={'pk': self.pk},
-        #)
+    def get_absolute_url(self):
+        return reverse(
+            'lizard_esf_api_configuration_detail',
+            kwargs={'pk': self.pk},
+        )
 
     def __unicode__(self):
         return self.name
