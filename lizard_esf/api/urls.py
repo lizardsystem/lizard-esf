@@ -7,16 +7,22 @@ from django.contrib import admin
 from djangorestframework.views import InstanceModelView
 from djangorestframework.views import ListOrCreateModelView
 
-from lizard_esf.api.resources import ConfigurationTypeResource
-from lizard_esf.api.resources import ValueTypeResource
 from lizard_esf.api.resources import AreaConfigurationResource
 
 from lizard_esf.api.views import RootView
+
 from lizard_esf.api.views import ConfigurationListView
 from lizard_esf.api.views import ConfigurationDetailView
 from lizard_esf.api.views import ConfigurationCreateView
 from lizard_esf.api.views import ConfigurationTreeView
 
+from lizard_esf.api.views import ValueTypeRootView
+from lizard_esf.api.views import ValueTypeCreateView
+from lizard_esf.api.views import ValueTypeView
+
+from lizard_esf.api.views import ConfigurationTypeRootView
+from lizard_esf.api.views import ConfigurationTypeCreateView
+from lizard_esf.api.views import ConfigurationTypeView
 
 admin.autodiscover()
 
@@ -42,17 +48,23 @@ urlpatterns = patterns(
         name=NAME_PREFIX + 'configuration_detail'),
 
     url(r'^configuration_type/$',
-        ListOrCreateModelView.as_view(resource=ConfigurationTypeResource),
+        ConfigurationTypeRootView.as_view(),
         name=NAME_PREFIX + 'configuration_type_root'),
+    url(r'^configuration_type/create/$',
+        ConfigurationTypeCreateView.as_view(),
+        name=NAME_PREFIX + 'configuration_type_create'),
     url(r'^configuration_type/(?P<pk>[^/]+)/$',
-        InstanceModelView.as_view(resource=ConfigurationTypeResource),
+        ConfigurationTypeView.as_view(),
         name=NAME_PREFIX + 'configuration_type'),
 
     url(r'^value_type/$',
-        ListOrCreateModelView.as_view(resource=ValueTypeResource),
+        ValueTypeRootView.as_view(),
         name=NAME_PREFIX + 'value_type_root'),
+    url(r'^value_type/create/$',
+        ValueTypeCreateView.as_view(),
+        name=NAME_PREFIX + 'value_type_create'),
     url(r'^value_type/(?P<pk>[^/]+)/$',
-        InstanceModelView.as_view(resource=ValueTypeResource),
+        ValueTypeView.as_view(),
         name=NAME_PREFIX + 'value_type'),
 
 

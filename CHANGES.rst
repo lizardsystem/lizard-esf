@@ -11,6 +11,10 @@ Changelog of lizard-esf
 0.1 (2011-11-07)
 ----------------
 
+- Initial library skeleton created by nensskel.  [your name]
+
 - Initial models and views. Works in Chrome.
 
-- Initial library skeleton created by nensskel.  [your name]
+- Replaced ModelResources in api by custom views.
+
+- Adds form for the name-only models
