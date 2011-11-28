@@ -162,35 +162,6 @@ class ConfigurationTypeRootView(DocumentRootView):
     form = NameForm
 
 
-class CreateView(View):
-    """
-    Baseview for create views.
-
-    Subclasses must set form and document attributes.
-    """
-    def post(self, request, pk=None):
-        """Create a document."""
-        obj = self.document(**self.CONTENT)
-        obj.save()
-        return Response(status.HTTP_200_OK)
-
-
-class ValueTypeCreateView(CreateView):
-    """
-    Create value type.
-    """
-    document = ValueType
-    form = NameForm
-
-
-class ConfigurationTypeCreateView(CreateView):
-    """
-    Create configuration type.
-    """
-    document = ConfigurationType
-    form = NameForm
-
-
 class DocumentView(View):
     """
     Baseview for detail views.
