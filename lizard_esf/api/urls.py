@@ -17,11 +17,9 @@ from lizard_esf.api.views import ConfigurationCreateView
 from lizard_esf.api.views import ConfigurationTreeView
 
 from lizard_esf.api.views import ValueTypeRootView
-from lizard_esf.api.views import ValueTypeCreateView
 from lizard_esf.api.views import ValueTypeView
 
 from lizard_esf.api.views import ConfigurationTypeRootView
-from lizard_esf.api.views import ConfigurationTypeCreateView
 from lizard_esf.api.views import ConfigurationTypeView
 
 admin.autodiscover()
@@ -50,23 +48,16 @@ urlpatterns = patterns(
     url(r'^configuration_type/$',
         ConfigurationTypeRootView.as_view(),
         name=NAME_PREFIX + 'configuration_type_root'),
-    url(r'^configuration_type/create/$',
-        ConfigurationTypeCreateView.as_view(),
-        name=NAME_PREFIX + 'configuration_type_create'),
-    url(r'^configuration_type/(?P<pk>[^/]+)/$',
+    url(r'^configuration_type/(?P<pk>[0-9]+)/$',
         ConfigurationTypeView.as_view(),
         name=NAME_PREFIX + 'configuration_type'),
 
     url(r'^value_type/$',
         ValueTypeRootView.as_view(),
         name=NAME_PREFIX + 'value_type_root'),
-    url(r'^value_type/create/$',
-        ValueTypeCreateView.as_view(),
-        name=NAME_PREFIX + 'value_type_create'),
-    url(r'^value_type/(?P<pk>[^/]+)/$',
+    url(r'^value_type/(?P<pk>[0-9]+)/$',
         ValueTypeView.as_view(),
         name=NAME_PREFIX + 'value_type'),
-
 
     url(r'^area_configuration/$',
         ListOrCreateModelView.as_view(resource=AreaConfigurationResource),

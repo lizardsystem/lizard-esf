@@ -18,3 +18,7 @@ Changelog of lizard-esf
 - Replaced ModelResources in api by custom views.
 
 - Adds form for the name-only models
+
+- Adds post possibility in root views of -type models
+
+- Adds admin for all models
