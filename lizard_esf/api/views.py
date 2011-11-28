@@ -143,7 +143,7 @@ class DocumentRootView(View):
         """Create a document."""
         obj = self.document(**self.CONTENT)
         obj.save()
-        return Response(status.HTTP_200_OK)
+        return Response(status.HTTP_201_CREATED)
 
 
 class ValueTypeRootView(DocumentRootView):

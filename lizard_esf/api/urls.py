@@ -48,14 +48,14 @@ urlpatterns = patterns(
     url(r'^configuration_type/$',
         ConfigurationTypeRootView.as_view(),
         name=NAME_PREFIX + 'configuration_type_root'),
-    url(r'^configuration_type/(?P<pk>[^/]+)/$',
+    url(r'^configuration_type/(?P<pk>[0-9]+)/$',
         ConfigurationTypeView.as_view(),
         name=NAME_PREFIX + 'configuration_type'),
 
     url(r'^value_type/$',
         ValueTypeRootView.as_view(),
         name=NAME_PREFIX + 'value_type_root'),
-    url(r'^value_type/(?P<pk>[^/]+)/$',
+    url(r'^value_type/(?P<pk>[0-9]+)/$',
         ValueTypeView.as_view(),
         name=NAME_PREFIX + 'value_type'),
 
