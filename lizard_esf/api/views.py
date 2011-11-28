@@ -60,8 +60,6 @@ class ConfigurationListView(View):
         configs = Configuration.objects.all()
         return [(c.name, c.get_absolute_url) for c in configs]
 
-    pass
-
 
 class ConfigurationCreateView(View):
     """
@@ -141,12 +139,19 @@ class DocumentRootView(View):
         return [d.get_dict(url=True)
                 for d in self.document.objects.all()]
 
+    def post(self, request):
+        """Create a document."""
+        obj = self.document(**self.CONTENT)
+        obj.save()
+        return Response(status.HTTP_200_OK)
+
 
 class ValueTypeRootView(DocumentRootView):
     """
     View all value types.
     """
     document = ValueType
+    form = NameForm
 
 
 class ConfigurationTypeRootView(DocumentRootView):
@@ -154,6 +159,7 @@ class ConfigurationTypeRootView(DocumentRootView):
     View all configuration types.
     """
     document = ConfigurationType
+    form = NameForm
 
 
 class CreateView(View):
@@ -193,18 +199,21 @@ class DocumentView(View):
     """
     def get(self, request, pk):
         """Read a document."""
+        try:
+            obj = self.document.objects.get(pk=pk)
+        except self.document.DoesNotExist:
+            return Response(status.HTTP_404_NOT_FOUND)
+
         if request.GET.get('_format') == 'property':
             fields = request.GET.get('_fields')
             if fields:
                 properties = fields.split(',')
             else:
                 properties = None
-            obj = self.document.objects.get(pk=pk)
             property_list = obj.get_property_list(properties=properties)
             return {'properties': property_list}
 
-        obj_dict = self.document.objects.get(pk=pk).get_dict()
-        return obj_dict
+        return obj.get_dict()
 
     def put(self, request, pk):
         """Update a document."""
