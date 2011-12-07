@@ -2,18 +2,14 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.2 (unreleased)
+0.3 (unreleased)
 ----------------
 
 - Nothing changed yet.
 
 
-0.1 (2011-11-07)
+0.2 (2011-12-07)
 ----------------
-
-- Initial library skeleton created by nensskel.  [your name]
-
-- Initial models and views. Works in Chrome.
 
 - Replaced ModelResources in api by custom views.
 
@@ -22,3 +18,11 @@ Changelog of lizard-esf
 - Adds post possibility in root views of -type models
 
 - Adds admin for all models
+
+
+0.1 (2011-11-07)
+----------------
+
+- Initial library skeleton created by nensskel.  [your name]
+
+- Initial models and views. Works in Chrome.

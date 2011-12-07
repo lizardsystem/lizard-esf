@@ -94,6 +94,10 @@ class ConfigurationDetailView(View):
         # fields that have editable=False
         return model_to_dict(cnf, exclude=['path', 'numchild', 'depth'])
 
+    def delete(self, request, pk):
+        """Delete the configuration."""
+        Configuration.objects.get(pk=pk).delete()
+        return Response(status.HTTP_200_OK)
 
 class ConfigurationTreeView(View):
     """
@@ -188,10 +192,15 @@ class DocumentView(View):
 
     def put(self, request, pk):
         """Update a document."""
-        obj = self.document.objects.get_or_create(pk=pk)[0]
-        obj.__dict__.update(self.CONTENT)
-        obj.save()
-        return Response(status.HTTP_200_OK)
+        try:
+            obj = self.document.objects.get(pk=pk)
+            obj.__dict__.update(self.CONTENT)
+            obj.save()
+            return Response(status.HTTP_200_OK)
+        except self.document.DoesNotExist:
+            obj = self.document(pk=pk, **self.CONTENT)
+            obj.save()
+            return Response(status.HTTP_201_CREATED)
 
     def delete(self, request, pk):
         """Delete a document."""
