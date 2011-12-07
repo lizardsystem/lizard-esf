@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.2 (unreleased)
+0.2 (2011-12-07)
 ----------------
 
 - Replaced ModelResources in api by custom views.
