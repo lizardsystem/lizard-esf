@@ -101,7 +101,7 @@ class ConfigurationTreeView(View):
     """
     def get(self, request):
 
-        area = self.CONTENT.get('object_id', None)
+        area =  request.GET.get('object_id', None)
         area = Area.objects.get(ident=area)
 
         area_config = AreaConfiguration.objects.filter(area=area)
