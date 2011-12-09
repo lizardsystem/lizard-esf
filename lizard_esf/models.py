@@ -7,6 +7,7 @@ from django.db import models
 
 from lizard_area.models import Area
 from treebeard.mp_tree import MP_Node
+from lizard_fewsnorm.models import TimeSeriesCache
 
 # from django.core.urlresolvers import reverse
 # from lizard_fewsnorm.models import TimeseriesKeys
@@ -100,6 +101,7 @@ class Configuration(MP_Node):
     code = models.CharField(max_length=128)
     short_name = models.CharField(max_length=128)
     source_name = models.CharField(max_length=128)
+    manual = models.BooleanField(default=False)
     configuration_type = models.ForeignKey(ConfigurationType)
 
     default_parameter_code_manual_fews = models.CharField(max_length=128)
@@ -130,7 +132,7 @@ class AreaConfiguration(models.Model):
         Configuration,
         related_name='esf_areaconfiguration_set',
     )
-    manual = models.IntegerField(default=1)
+    manual = models.IntegerField(default=0)
     manual_value = models.FloatField(
         blank=True, null=True,
     )
@@ -138,31 +140,41 @@ class AreaConfiguration(models.Model):
     last_edit_date = models.DateTimeField(auto_now=True)
     last_comment = models.CharField(max_length=256, blank=True, default='-')
 
-#    timeseries_manual = models.ForeignKey(
-#        TimeseriesKeys,
-#        related_name='esf_areaconfiguration_set1',
-#    )
-#    timeseries_automatic = models.ForeignKey(
-#        TimeseriesKeys,
-#        related_name='esf_areaconfiguration_set2',
-#    )
-#    timeseries_final_value = models.ForeignKey(
-#        TimeseriesKeys,
-#        related_name='esf_areaconfiguration_set3',
-#    )
-
     def get_mydump(self):
-        return {
+
+        output = {
             'id': self.id,
             'config_id': self.configuration.id,
             'name': self.configuration.name,
             'source_name': self.configuration.source_name,
             'manual': self.manual,
             'manual_value': self.manual_value,
-            'auto_value': 2,
             'type': self.configuration.value_type.name,
+            'is_manual': self.configuration.manual,
+            'config_type': self.configuration.configuration_type.name,
             'last_comment': 'ja ja ja',
         }
+        if self.configuration.configuration_type.name == 'parameter':
+            output['auto_value'] = None
+            self.manual = None
+        else:
+            ts = TimeSeriesCache.objects.filter(geolocationcache__name="Aetsveldsche polder oost", parametercache__ident=self.configuration.default_parameter_code_automatic_fews)
+            #todo: locatie id mist!!!!
+            #self.area.ident
+            print ts.count()
+            if ts.count() > 0:
+
+                event = ts[0].get_latest_event()
+
+                output['auto_value'] = event.value
+                output['auto_value_ts'] = event.timestamp
+
+            else:
+
+                output['auto_value'] =  None
+
+
+        return output
 
 
 def tree(config):

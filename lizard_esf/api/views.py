@@ -107,8 +107,14 @@ class ConfigurationTreeView(View):
 
         area =  request.GET.get('object_id', None)
         area = Area.objects.get(ident=area)
+        configs = Configuration.objects.exclude(esf_areaconfiguration_set__area=area)
 
-        area_config = AreaConfiguration.objects.filter(area=area)
+        print('%i nieuwe configs voor dit gebied'%configs.count())
+        for config in configs:
+            AreaConfiguration.objects.get_or_create(configuration=config, area=area)
+
+
+        area_config = AreaConfiguration.objects.filter(area=area).order_by('configuration__name')
 
         tree_data = tree(area_config)
 
