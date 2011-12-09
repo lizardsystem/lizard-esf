@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.3 (unreleased)
+0.3 (2011-12-09)
 ----------------
 
 - Nothing changed yet.
