@@ -101,7 +101,7 @@ class Configuration(MP_Node):
     code = models.CharField(max_length=128)
     short_name = models.CharField(max_length=128)
     source_name = models.CharField(max_length=128)
-    manual = models.BooleanField(default=False)
+    manual = models.NullBooleanField(default=False)
     configuration_type = models.ForeignKey(ConfigurationType)
 
     default_parameter_code_manual_fews = models.CharField(max_length=128)
