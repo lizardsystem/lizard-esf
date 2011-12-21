@@ -5,7 +5,8 @@ Changelog of lizard-esf
 0.4 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Adds basic security - all operations are now forbidden when not
+  authenticated
 
 
 0.3 (2011-12-09)

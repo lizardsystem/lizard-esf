@@ -29,6 +29,9 @@ class TreeView(View):
     Specialized view for reading and updating objects in a treeform.
     """
     def get(self, request):
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         return ['test']
 
 
@@ -37,13 +40,13 @@ class RootView(View):
     Startpoint.
     """
     def get(self, request):
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         return [{
             'configurations': reverse(
                 'lizard_esf_api_configuration_root'),
         }, {
-#           'area configurations': reverse(
-#               'lizard_esf_api_area_configuration_root'),
-#       }, {
             'configuration types': reverse(
                 'lizard_esf_api_configuration_type_root'),
         }, {
@@ -57,6 +60,9 @@ class RootView(View):
 
 class ConfigurationListView(View):
     def get(self, request):
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         configs = Configuration.objects.all()
         return [(c.name, c.get_absolute_url) for c in configs]
 
@@ -68,9 +74,15 @@ class ConfigurationCreateView(View):
     form = ConfigurationForm
 
     def get(self, request):
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         return Response(status.HTTP_200_OK)
 
     def put(self, request):
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         parent = self.CONTENT['parent']
         del self.CONTENT['parent']
 
@@ -89,6 +101,9 @@ class ConfigurationDetailView(View):
     Configuration details
     """
     def get(self, request, pk):
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         cnf = Configuration.objects.get(pk=pk)
         # Beware, model_to_dict does not include
         # fields that have editable=False
@@ -96,6 +111,9 @@ class ConfigurationDetailView(View):
 
     def delete(self, request, pk):
         """Delete the configuration."""
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         Configuration.objects.get(pk=pk).delete()
         return Response(status.HTTP_200_OK)
 
@@ -104,6 +122,8 @@ class ConfigurationTreeView(View):
     Treeview, basically a dump_bulk() from treebeard
     """
     def get(self, request):
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
 
         area =  request.GET.get('object_id', None)
         area = Area.objects.get(ident=area)
@@ -121,6 +141,8 @@ class ConfigurationTreeView(View):
         return tree_data
 
     def post(self, request, pk=None):
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
 
         data = json.loads(self.CONTENT.get('data', []))
         if type(data) == dict:
@@ -146,11 +168,17 @@ class DocumentRootView(View):
         Read a document list. Assumes documents have a get_absolute_url()
         method implemented.
         """
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         return [d.get_dict(url=True)
                 for d in self.document.objects.all()]
 
     def post(self, request):
         """Create a document."""
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         obj = self.document(**self.CONTENT)
         obj.save()
         return Response(status.HTTP_201_CREATED)
@@ -180,6 +208,9 @@ class DocumentView(View):
     """
     def get(self, request, pk):
         """Read a document."""
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         try:
             obj = self.document.objects.get(pk=pk)
         except self.document.DoesNotExist:
@@ -198,6 +229,9 @@ class DocumentView(View):
 
     def put(self, request, pk):
         """Update a document."""
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         try:
             obj = self.document.objects.get(pk=pk)
             obj.__dict__.update(self.CONTENT)
@@ -210,6 +244,9 @@ class DocumentView(View):
 
     def delete(self, request, pk):
         """Delete a document."""
+        if request.user.is_anonymous():
+            return Response(status.HTTP_403_FORBIDDEN)
+
         self.document.objects.get(pk=pk).delete()
         return Response(status.HTTP_200_OK)
 
