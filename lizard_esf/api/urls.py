@@ -4,10 +4,10 @@ from django.conf.urls.defaults import patterns
 from django.conf.urls.defaults import url
 from django.contrib import admin
 
-from djangorestframework.views import InstanceModelView
-from djangorestframework.views import ListOrCreateModelView
+#from djangorestframework.views import InstanceModelView
+#from djangorestframework.views import ListOrCreateModelView
 
-from lizard_esf.api.resources import AreaConfigurationResource
+#from lizard_esf.api.resources import AreaConfigurationResource
 
 from lizard_esf.api.views import RootView
 
@@ -59,10 +59,10 @@ urlpatterns = patterns(
         ValueTypeView.as_view(),
         name=NAME_PREFIX + 'value_type'),
 
-    url(r'^area_configuration/$',
-        ListOrCreateModelView.as_view(resource=AreaConfigurationResource),
-        name=NAME_PREFIX + 'area_configuration_root'),
-    url(r'^area_configuration/(?P<pk>[^/]+)/$',
-        InstanceModelView.as_view(resource=AreaConfigurationResource),
-        name=NAME_PREFIX + 'area_configuration'),
-    )
+    #url(r'^area_configuration/$',
+        #ListOrCreateModelView.as_view(resource=AreaConfigurationResource),
+        #name=NAME_PREFIX + 'area_configuration_root'),
+    #url(r'^area_configuration/(?P<pk>[^/]+)/$',
+        #InstanceModelView.as_view(resource=AreaConfigurationResource),
+        #name=NAME_PREFIX + 'area_configuration'),
+    #)
