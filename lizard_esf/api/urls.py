@@ -65,4 +65,4 @@ urlpatterns = patterns(
     #url(r'^area_configuration/(?P<pk>[^/]+)/$',
         #InstanceModelView.as_view(resource=AreaConfigurationResource),
         #name=NAME_PREFIX + 'area_configuration'),
-    #)
+    )
