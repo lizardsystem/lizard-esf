@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.4 (unreleased)
+0.4 (2011-12-27)
 ----------------
 
 - Field manual can now be null as well
