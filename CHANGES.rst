@@ -5,6 +5,8 @@ Changelog of lizard-esf
 0.4 (unreleased)
 ----------------
 
+- Field manual can now be null as well
+
 - Adds basic security - all operations are now forbidden when not
   authenticated
 
