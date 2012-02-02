@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.5 (unreleased)
+0.5 (2012-02-02)
 ----------------
 
 - Made get latest value from Fews function area sensitive (instaead of dummy value)
