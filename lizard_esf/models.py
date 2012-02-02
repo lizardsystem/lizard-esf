@@ -158,16 +158,19 @@ class AreaConfiguration(models.Model):
             output['auto_value'] = None
             self.manual = None
         else:
-            ts = TimeSeriesCache.objects.filter(geolocationcache__name="Aetsveldsche polder oost", parametercache__ident=self.configuration.default_parameter_code_automatic_fews)
-            #todo: locatie id mist!!!!
+            ts = TimeSeriesCache.objects.filter(geolocationcache__ident=self.area.ident, parametercache__ident=self.configuration.default_parameter_code_automatic_fews)
             #self.area.ident
             print ts.count()
             if ts.count() > 0:
+                try:
+                    event = ts[0].get_latest_event()
 
-                event = ts[0].get_latest_event()
-
-                output['auto_value'] = event.value
-                output['auto_value_ts'] = event.timestamp
+                    output['auto_value'] = event.value
+                    output['auto_value_ts'] = event.timestamp
+                except Exception, e:
+                    print 'error: '
+                    print e
+                    output['auto_value'] =  None
 
             else:
 
