@@ -93,23 +93,54 @@ class ValueType(NameAbstract):
     pass
 
 
+class DbfFile(models.Model):
+    '''
+        DBF file
+    
+    '''
+    name = models.CharField(max_length=128)
+
+    def __unicode__(self):
+        return self.name
+
+    
 class Configuration(MP_Node):
     """
     Waterbalanceconfiguration.
     """
+
+    DBF_FIELD_TYPES = (
+        ('C', 'Text'),
+        ('N', 'Number'),
+        ('D', 'Date'),
+    )
+
+
     name = models.CharField(max_length=128)
     code = models.CharField(max_length=128)
-    short_name = models.CharField(max_length=128)
-    source_name = models.CharField(max_length=128)
-    manual = models.NullBooleanField(default=False)
-    configuration_type = models.ForeignKey(ConfigurationType)
-
-    default_parameter_code_manual_fews = models.CharField(max_length=128)
-    default_parameter_code_automatic_fews = models.CharField(max_length=128)
-    default_parameter_code_final_fews = models.CharField(max_length=128)
-    value_type = models.ForeignKey(ValueType)
-
+    source_name = models.CharField(max_length=128)#bron
     expanded = models.BooleanField(default=False)
+
+    configuration_type = models.ForeignKey(ConfigurationType)#setting/ uitkomst/ ?????
+    value_type = models.ForeignKey(ValueType)#number, boolean, oordeel
+
+    default_parameter_code_manual_fews = models.CharField(max_length=256, blank=True, default='')
+    #format: parametercode,moduleinstance_code,timestep_code met een comma ertussen
+    # uitkomst in fews
+    timeserie_ref_status = models.CharField(max_length=256, blank=True, default='')#betrouwbaarheid
+    #format: parametercode,moduleinstance_code,timestep_code met een comma ertussen
+
+    manual = models.NullBooleanField(default=False) #overrulen
+
+    dbf_file = models.ForeignKey(DbfFile, null=True, blank=True)
+    dbf_index = models.IntegerField(null=True, blank=True)
+
+    dbf_valuefield_name = models.CharField(max_length=128, blank=True, default='')
+    dbf_valuefield_type = models.CharField(max_length=1, choices=DBF_FIELD_TYPES)
+    dbf_valuefield_length = models.IntegerField(null=True, blank=True)
+    dbf_valuefield_decimals = models.IntegerField(null=True, blank=True)
+
+    dbf_manualfield_name = models.CharField(max_length=128, blank=True, default='') #fixed format
 
     node_order_by = ['name']
 
@@ -136,6 +167,7 @@ class AreaConfiguration(models.Model):
     manual_value = models.FloatField(
         blank=True, null=True,
     )
+    comment = models.TextField(max_length=256, blank=True, default='-')
     last_edit_by = models.CharField(max_length=256, blank=True, default='-')
     last_edit_date = models.DateTimeField(auto_now=True)
     last_comment = models.CharField(max_length=256, blank=True, default='-')
