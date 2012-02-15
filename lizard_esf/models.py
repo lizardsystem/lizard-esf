@@ -96,17 +96,17 @@ class ValueType(NameAbstract):
 class DbfFile(models.Model):
     '''
         DBF file
-    
+
     '''
     name = models.CharField(max_length=128)
 
     def __unicode__(self):
         return self.name
 
-    
+
 class Configuration(MP_Node):
     """
-    Waterbalanceconfiguration.
+    ESF configuration.
     """
 
     DBF_FIELD_TYPES = (
