@@ -5,6 +5,7 @@ from lizard_esf.models import AreaConfiguration
 from lizard_esf.models import ValueType
 from lizard_esf.models import ConfigurationType
 from lizard_esf.models import DbfFile
+from lizard_esf.models import DBFConfiguration
 
 
 class ConfigurationAdmin(admin.ModelAdmin):
@@ -32,3 +33,4 @@ admin.site.register(AreaConfiguration)
 admin.site.register(ValueType)
 admin.site.register(ConfigurationType)
 admin.site.register(DbfFile)
+admin.site.register(DBFConfiguration)

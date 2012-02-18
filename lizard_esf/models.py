@@ -9,6 +9,8 @@ from lizard_area.models import Area
 from treebeard.mp_tree import MP_Node
 from lizard_fewsnorm.models import TimeSeriesCache
 
+from lizard_security.models import DataSet
+
 # from django.core.urlresolvers import reverse
 # from lizard_fewsnorm.models import TimeseriesKeys
 
@@ -96,17 +98,17 @@ class ValueType(NameAbstract):
 class DbfFile(models.Model):
     '''
         DBF file
-    
+
     '''
     name = models.CharField(max_length=128)
 
     def __unicode__(self):
         return self.name
 
-    
+
 class Configuration(MP_Node):
     """
-    Waterbalanceconfiguration.
+    ESF configuration.
     """
 
     DBF_FIELD_TYPES = (
@@ -115,32 +117,38 @@ class Configuration(MP_Node):
         ('D', 'Date'),
     )
 
-
     name = models.CharField(max_length=128)
     code = models.CharField(max_length=128)
-    source_name = models.CharField(max_length=128)#bron
+    source_name = models.CharField(max_length=128)  # bron
     expanded = models.BooleanField(default=False)
 
-    configuration_type = models.ForeignKey(ConfigurationType)#setting/ uitkomst/ ?????
-    value_type = models.ForeignKey(ValueType)#number, boolean, oordeel
+    configuration_type = models.ForeignKey(ConfigurationType)  # setting/ uitkomst/ ?????
+    value_type = models.ForeignKey(ValueType)  # number, boolean, oordeel
 
-    default_parameter_code_manual_fews = models.CharField(max_length=256, blank=True, default='')
-    #format: parametercode,moduleinstance_code,timestep_code met een comma ertussen
+    default_parameter_code_manual_fews = models.CharField(max_length=256,
+                                                          blank=True,
+                                                          default='')
+    # format: parametercode,moduleinstance_code,timestep_code met een comma ertussen
     # uitkomst in fews
-    timeserie_ref_status = models.CharField(max_length=256, blank=True, default='')#betrouwbaarheid
+    timeserie_ref_status = models.CharField(max_length=256,
+                                            blank=True, default='')  # betrouwbaarheid
     #format: parametercode,moduleinstance_code,timestep_code met een comma ertussen
 
-    manual = models.NullBooleanField(default=False) #overrulen
+    manual = models.NullBooleanField(default=False)  # overrulen
 
     dbf_file = models.ForeignKey(DbfFile, null=True, blank=True)
     dbf_index = models.IntegerField(null=True, blank=True)
 
-    dbf_valuefield_name = models.CharField(max_length=128, blank=True, default='')
-    dbf_valuefield_type = models.CharField(max_length=1, choices=DBF_FIELD_TYPES)
+    dbf_valuefield_name = models.CharField(max_length=10,
+                                           blank=True,
+                                           default='')
+    dbf_valuefield_type = models.CharField(max_length=1,
+                                           choices=DBF_FIELD_TYPES)
     dbf_valuefield_length = models.IntegerField(null=True, blank=True)
     dbf_valuefield_decimals = models.IntegerField(null=True, blank=True)
 
-    dbf_manualfield_name = models.CharField(max_length=128, blank=True, default='') #fixed format
+    dbf_manualfield_name = models.CharField(max_length=10,
+                                            blank=True, default='')  # fixed format
 
     node_order_by = ['name']
 
@@ -192,8 +200,10 @@ class AreaConfiguration(models.Model):
             output['auto_value'] = None
             self.manual = None
         else:
-            ts = TimeSeriesCache.objects.filter(geolocationcache__ident=self.area.ident, parametercache__ident=self.configuration.default_parameter_code_manual_fews)
-            #self.area.ident
+            ts = TimeSeriesCache.objects.filter(
+                geolocationcache__ident=self.area.ident,
+                parametercache__ident=self.configuration.default_parameter_code_automatic_fews)
+
             if ts.count() > 0:
                 try:
                     event = ts[0].get_latest_event()
@@ -202,9 +212,10 @@ class AreaConfiguration(models.Model):
                 except Exception, e:
                     print 'error: '
                     print e
-                    output['auto_value'] =  None
+                    output['auto_value'] = None
             else:
-                output['auto_value'] =  None
+                output['auto_value'] = None
+
         return output
 
 
@@ -242,3 +253,18 @@ def tree(config):
                     child_3['children'] = a[child_3['config_id']]
 
     return tree
+
+
+class DBFConfiguration(models.Model):
+    """Configuration to create dbf files."""
+    dbf_file = models.ForeignKey(DbfFile)
+    data_set = models.ForeignKey(DataSet, null=True, blank=True,
+                                 related_name="esf_dbfconfiguration_set")
+    save_to = models.CharField(max_length=128, null=True, blank=True,
+                               help_text="Example: '/home/naam/dbf/'")
+    filename = models.CharField(max_length=128,
+                                help_text="Example: 'aanafvoergebieden'")
+    enabled = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return "%s %s" % (self.dbf_file, self.data_set)
