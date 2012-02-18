@@ -2,6 +2,7 @@
 """
 API views not coupled to models.
 """
+import datetime
 
 from django.core.urlresolvers import reverse
 from django.forms.models import model_to_dict
@@ -150,6 +151,8 @@ class ConfigurationTreeView(View):
         for record in data:
             area_config = AreaConfiguration.objects.get(id=int(record['id']))
             del record['id']
+            record['last_edit_by'] = request.user.get_full_name()
+            record['last_edit_date'] = datetime.datetime.now()
             for (key, value) in record.items():
                 setattr(area_config, key, value)
             area_config.save()

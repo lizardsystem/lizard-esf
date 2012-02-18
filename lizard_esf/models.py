@@ -184,31 +184,27 @@ class AreaConfiguration(models.Model):
             'type': self.configuration.value_type.name,
             'is_manual': self.configuration.manual,
             'config_type': self.configuration.configuration_type.name,
-            'last_comment': 'ja ja ja',
+            'comment': self.comment,
+            'last_edit_by': self.last_edit_by,
+            'last_edit_date': self.last_edit_date
         }
         if self.configuration.configuration_type.name == 'parameter':
             output['auto_value'] = None
             self.manual = None
         else:
-            ts = TimeSeriesCache.objects.filter(geolocationcache__ident=self.area.ident, parametercache__ident=self.configuration.default_parameter_code_automatic_fews)
+            ts = TimeSeriesCache.objects.filter(geolocationcache__ident=self.area.ident, parametercache__ident=self.configuration.default_parameter_code_manual_fews)
             #self.area.ident
-            print ts.count()
             if ts.count() > 0:
                 try:
                     event = ts[0].get_latest_event()
-
                     output['auto_value'] = event.value
                     output['auto_value_ts'] = event.timestamp
                 except Exception, e:
                     print 'error: '
                     print e
                     output['auto_value'] =  None
-
             else:
-
                 output['auto_value'] =  None
-
-
         return output
 
 
