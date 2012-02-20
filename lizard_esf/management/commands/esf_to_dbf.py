@@ -17,9 +17,9 @@ class Command(BaseCommand):
     help = ("Example: bin/django esf_to_dbf")
 
     def handle(self, *args, **options):
-        self.export_configuratins()
+        self.export()
 
-    def export_esf_configuratios(self):
+    def export(self):
         dbf_configurations = DBFConfiguration.objects.filter(enabled=True)
         logger.info("%s esf's configurations to export." % len(
                 dbf_configurations))

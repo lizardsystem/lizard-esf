@@ -40,6 +40,13 @@ def file_path(save_to, filename, extention):
     return filepath
 
 
+def is_empty_value(value):
+    """Check passed value."""
+    if ((value is None) or (value == '')):
+        return False
+    return True
+
+
 def field_to_dbf(out, f_name, f_type, f_length=None, f_decimals=None):
     """Add a field into passed dbf.
 
@@ -62,23 +69,25 @@ def field_to_dbf(out, f_name, f_type, f_length=None, f_decimals=None):
 
 def fields_to_dbf(mapping, out):
     """
-    Adds fields into dbf file.
+    Add fields into dbf file.
+    Avoid fields with None or empty value.
     """
     field_to_dbf(out, 'GAF_ID', 'N', 9, 0)
     field_to_dbf(out, 'GAFIDENT', 'C', 24)
     field_to_dbf(out, 'GAFNAME', 'C', 100)
     for item in mapping:
-        field_to_dbf(out,
-                     item.dbf_valuefield_name,
-                     item.dbf_valuefield_type,
-                     item.dbf_valuefield_length,
-                     item.dbf_valuefield_decimals)
-
-        field_to_dbf(out,
-                     item.dbf_manualfield_name,
-                     item.dbf_valuefield_type,
-                     item.dbf_valuefield_length,
-                     item.dbf_valuefield_decimals)
+        if is_empty_value(item.dbf_valuefield_name):
+            field_to_dbf(out,
+                         item.dbf_valuefield_name,
+                         item.dbf_valuefield_type,
+                         item.dbf_valuefield_length,
+                         item.dbf_valuefield_decimals)
+        if is_empty_value(item.dbf_manualfield_name):
+            field_to_dbf(out,
+                         item.dbf_manualfield_name,
+                         item.dbf_valuefield_type,
+                         item.dbf_valuefield_length,
+                         item.dbf_valuefield_decimals)
 
 
 def store_data(out, area, areaconfigurations):
@@ -97,12 +106,12 @@ def store_data(out, area, areaconfigurations):
 
         manual_value = item.manual_value
         value = item.manual
-        print "%s | %s" % (value, manual_value)
 
-        if dbf_manualfield_name is not None and manual_value is not None:
+        if is_empty_value(dbf_manualfield_name) and is_empty_value(
+            manual_value):
             rec[dbf_manualfield_name] = manual_value
 
-        if dbf_valuefield_name is not None and value is not None:
+        if is_empty_value(dbf_valuefield_name) and is_empty_value(value):
             rec[dbf_valuefield_name] = value
     rec.store()
 
