@@ -1,0 +1,15 @@
+{% ifequal esf.source 'auto'%}
+waarde is berekend<br>
+berekend op: {{ esf.date|date:"d M Y" }}
+{% endifequal %}
+
+{% ifequal esf.source 'manual'%}
+waarde is expert inschatting<br>
+door: {{ esf.source_info }}<br>
+datum: {{ esf.date|date:"d M Y" }}
+{% endifequal %}
+
+{% ifequal esf.source 'novalue'%}
+waarde is niet beschikbaar
+{% endifequal %}
+

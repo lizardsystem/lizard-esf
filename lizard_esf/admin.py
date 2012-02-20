@@ -11,6 +11,7 @@ from lizard_esf.models import DBFConfiguration
 class ConfigurationAdmin(admin.ModelAdmin):
     list_display = (
         'name',
+        'code',
         'path',
         'depth',
         'manual',

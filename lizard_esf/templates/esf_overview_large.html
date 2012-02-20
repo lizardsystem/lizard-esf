@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <title>ESF Overview</title>
+
+        <style type="text/css">
+        body {
+            
+            font-family: 'Helvetica', sans-serif;
+        }
+        .esfTableBig td {
+            width: 100px
+        }
+        .esfTableBig tr td {
+            text-align: center;
+        }
+        .esfTableBig tr td.critical {
+            background-color: red;
+        }
+        .esfTableBig tr td.novalue {
+            /*background-color: #ccc;*/
+        }
+        </style>
+
+    </head>
+    <center>
+    <body>
+        <table class="esfTableBig">
+
+        {% for esf in esfs %}
+            {% cycle '<tr>' '' ''  as start %}
+            <td class="{{ esf.judgment }}" data-qtitle="{{ esf.name }}" data-qwidth="200"
+                data-qtip="{% include "esf_tip.html" %}">
+                <img src="/static_media/lizard_esf/images/{{ esf.nr }}.png">
+                {% if esf.stars %}
+                <img src="/static_media/lizard_esf/images/{{ esf.stars }}star.png">
+                {% else %}
+                {{ esf.stars_comment }}
+                {% endif %}
+            </td>
+            {% cycle '' '' '<tr/>' as end silent%}
+        {% endfor %}
+        </table>
+    </center>
+    </body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+        <title>ESF Overview</title>
+
+        <style type="text/css">
+        body {
+            
+            font-family: 'Helvetica', sans-serif;
+        }
+        .esfTableSmall td {
+            width: 60px;
+        }
+        .esfTableSmall tr td {
+            text-align: center;
+        }
+        .esfTableSmall span {
+            font-size:40px;
+        }
+        .esfTableSmall span.ok {
+
+        }
+        .esfTableSmall span.critical {
+            color:red;
+        }
+        .esfTableSmall span.novalue {
+            color: #ccc;
+        }
+        .esfTableSmall span.name {
+            font-style:italic;
+            font-size:8px;
+        }
+        </style>
+
+    </head>
+
+    <body>
+        <center>
+        <table class="esfTableSmall" style="font-size:40px">
+        {% for esf in esfs %}
+            {% cycle '<tr>' '' ''  as start %}
+            <td data-qtitle="{{ esf.name }}" data-qwidth="200"
+                data-qtip="{% include "esf_tip.html" %}">
+            <span class="{{ esf.judgment }}">{{ esf.nr }}</span>
+            {% comment %}<span class="name">{{ esf.name }}</span>{% endcomment %}
+            </td>
+            {% cycle '' '' '<tr/>' as end silent%}
+        {% endfor %}
+        </table>
+        </center>
+    </body>
+</html>

@@ -135,7 +135,7 @@ class ConfigurationTreeView(View):
             AreaConfiguration.objects.get_or_create(configuration=config, area=area)
 
 
-        area_config = AreaConfiguration.objects.filter(area=area).order_by('configuration__name')
+        area_config = AreaConfiguration.objects.filter(area=area).order_by('configuration__path')
 
         tree_data = tree(area_config)
 

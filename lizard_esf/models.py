@@ -108,8 +108,11 @@ class DbfFile(models.Model):
 
 class Configuration(MP_Node):
     """
-    ESF configuration.
+        ESF configuration.
+        Configuration of all objects, for visualisation and export of settings to Fews
     """
+
+    ESF_CHOICES = [(n, n) for n in range(-1, 10)]
 
     DBF_FIELD_TYPES = (
         ('C', 'Text'),
@@ -119,38 +122,62 @@ class Configuration(MP_Node):
 
     name = models.CharField(max_length=128)
     code = models.CharField(max_length=128)
-    source_name = models.CharField(max_length=128)  # bron
-    expanded = models.BooleanField(default=False)
+    is_main_esf = models.IntegerField(null=True, choices=ESF_CHOICES,
+                                      help_text='esf nummer voor indicatie van hoofd \'stoplichten\'')
 
-    configuration_type = models.ForeignKey(ConfigurationType)  # setting/ uitkomst/ ?????
-    value_type = models.ForeignKey(ValueType)  # number, boolean, oordeel
+    #settings for visualization
+    graphgroup_on_expand = models.CharField(max_length=128, null=True, blank=True,
+                                     help_text='Grafiek groep die aan gezet moet worden bij openen van dit element')
+    source_name = models.CharField(max_length=128,
+                                     help_text='Meta data over de Bron waar de automatisch berekende waarde vandaan komt')
+    expanded = models.BooleanField(default=False,
+                                     help_text='Wordt volgens mij niet meer gebruikt')
 
+    #settings for visualization and editors
+    manual = models.NullBooleanField(default=False,
+                                     help_text='Kan de eigenschappen worden overruled')
+    configuration_type = models.ForeignKey(ConfigurationType,
+                                     help_text='Wat voor item is het (resultaat/ instelling/ etc)')
+    value_type = models.ForeignKey(ValueType,
+                                     help_text='Wat voor type is de waarde. Wordt gebruikt o.a. gebruikt voor editor')
+
+    #settings for getting actual values from Fews
     default_parameter_code_manual_fews = models.CharField(max_length=256,
-                                                          blank=True,
-                                                          default='')
-    # format: parametercode,moduleinstance_code,timestep_code met een comma ertussen
-    # uitkomst in fews
+                                     blank=True,
+                                     default='',
+                                     help_text='locatie van resultaat in fews met de "<parameter>,<module_instance>\
+                                                <timestep>,<qualifier>", gescheiden door comma\' s. Als er bij 1 van\
+                                                de eigenschappen niks wordt ingevuld worden alle series geselecteerd en\
+                                                de eerste getoond')
     timeserie_ref_status = models.CharField(max_length=256,
-                                            blank=True, default='')  # betrouwbaarheid
-    #format: parametercode,moduleinstance_code,timestep_code met een comma ertussen
+                                     blank=True, default='',
+                                     help_text='locatie van status (aantal sterren die betrouwbaarheid aangeven) in fews met de \'<parameter>,<module_instance>\
+                                                <timestep>,<qualifier>\', gescheiden door comma\'s.) ')
 
-    manual = models.NullBooleanField(default=False)  # overrulen
-
-    dbf_file = models.ForeignKey(DbfFile, null=True, blank=True)
-    dbf_index = models.IntegerField(null=True, blank=True)
-
+    #settings for export to dbf
+    dbf_file = models.ForeignKey(DbfFile, null=True, blank=True,
+                                     help_text='Naam van de dbf file voor Fews waarnaar de\
+                                                eigenschap geschreven moet worden')
+    dbf_index = models.IntegerField(null=True, blank=True, default=0,
+                                     help_text='index voor de volgorde van kolommen in de dbf file')
     dbf_valuefield_name = models.CharField(max_length=10,
-                                           blank=True,
-                                           default='')
+                                     blank=True,
+                                     default='',
+                                     help_text='Veldnaam voor de waarde (als leeg, dan wordt de \
+                                                eigenschap niet weggeschreven')
     dbf_valuefield_type = models.CharField(max_length=1,
                                            choices=DBF_FIELD_TYPES)
-    dbf_valuefield_length = models.IntegerField(null=True, blank=True)
-    dbf_valuefield_decimals = models.IntegerField(null=True, blank=True)
+    dbf_valuefield_length = models.IntegerField(null=True, blank=True, default=12,
+                                     help_text='lengte van het dbf veld voor de waarde \
+                                                eigenschap niet weggeschreven')
+    dbf_valuefield_decimals = models.IntegerField(null=True, blank=True,
+                                     help_text='Aantal decimalen voor het waarde veld in geval van een number')
 
     dbf_manualfield_name = models.CharField(max_length=10,
-                                            blank=True, default='')  # fixed format
+                                     blank=True, default='',
+                                     help_text='Veldnaam in dbf voor de eigenschap \'handmatig\'')
 
-    node_order_by = ['name']
+    node_order_by = ['code']
 
     def get_absolute_url(self):
         return reverse(
@@ -164,7 +191,8 @@ class Configuration(MP_Node):
 
 class AreaConfiguration(models.Model):
     """
-    Areaconfiguration.
+        Areaconfiguration.
+        The values of the configuration fields for each area.
     """
     area = models.ForeignKey(Area, related_name='esf_areaconfiguration_set')
     configuration = models.ForeignKey(
@@ -202,7 +230,7 @@ class AreaConfiguration(models.Model):
         else:
             ts = TimeSeriesCache.objects.filter(
                 geolocationcache__ident=self.area.ident,
-                parametercache__ident=self.configuration.default_parameter_code_automatic_fews)
+                parametercache__ident=self.configuration.default_parameter_code_manual_fews)
 
             if ts.count() > 0:
                 try:
@@ -217,6 +245,81 @@ class AreaConfiguration(models.Model):
                 output['auto_value'] = None
 
         return output
+
+
+def get_data_main_esf(area):
+    """
+        return major data for the 9 esfs
+
+    """
+    configs = AreaConfiguration.objects.filter(
+                                    area=area,
+                                    configuration__is_main_esf__gt=0
+                                ).order_by(
+                                    'configuration__is_main_esf')
+
+    #value automatic / value manual
+    #date of last calculation / date of last change + naam van persoon die dit heeft ingevoerd
+    #de status bepaling + bron (niet beschikbaar)
+
+    data = {}
+
+    for config in configs:
+        rec = {}
+        rec['name'] = config.configuration.name
+        rec['nr'] = config.configuration.is_main_esf
+        if config.manual:
+            rec['source'] = 'manual'
+            rec['value'] = config.manual_value
+            rec['source_info'] = config.last_edit_by
+            rec['date'] = config.last_edit_date
+            rec['stars'] = None
+            rec['stars_comment'] = 'expert schatting'
+        else:
+            auto_value = None
+            auto_status = None
+            if auto_value:
+                rec['source'] = 'auto'
+                rec['value'] = 0 #sauto_value.value
+                rec['source_info'] = '' #+ configurationdate?
+                rec['date'] = 0 #auto_value.timestamp
+                rec['stars'] = 0 #auto_status.value
+                rec['stars_comment'] = None
+            else:
+                rec['value'] = 0
+                rec['source'] = 'novalue'
+                rec['source_info'] = None
+                rec['date'] = None
+                rec['stars'] = None
+                rec['stars_comment'] = 'niet beschikbaar'
+
+        if rec['value'] == 1:
+            rec['judgment'] = 'critical'
+        elif rec['value'] == 2:
+            rec['judgment'] = 'ok'
+        else:
+            rec['judgment'] = 'novalue'
+        #critical
+        data[config.configuration.is_main_esf] = rec
+
+    output = []
+    for i in range(1,10):
+        print i
+        if i in data:
+            print data[i]
+            output.append(data[i])
+        else:
+            output.append({
+                'judgment': 'novalue',
+                'name': i,
+                'nr': i,
+                'stars_comment': 'niet beschikbaar'
+            })
+
+    return output
+            
+
+
 
 
 def tree(config):
