@@ -10,23 +10,45 @@ from lizard_esf.models import DBFConfiguration
 
 class ConfigurationAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         'name',
         'code',
         'path',
         'depth',
-        'manual',
+        # 'manual',
         'configuration_type',
         'value_type',
-        'default_parameter_code_manual_fews',
-        'timeserie_ref_status',
-        'dbf_file',
+        # 'default_parameter_code_manual_fews',
+        # 'timeserie_ref_status',
+        # 'dbf_file',
         'dbf_index',
-        'dbf_valuefield_name',
-        'dbf_valuefield_type',
-        'dbf_valuefield_length',
-        'dbf_valuefield_decimals',
-        'dbf_manualfield_name'
+        # 'dbf_valuefield_name',
+        # 'dbf_valuefield_type',
+        # 'dbf_valuefield_length',
+        # 'dbf_valuefield_decimals',
+        # 'dbf_manualfield_name'
     )
+
+    list_editable = (
+        'name',
+        'code',
+        'path',
+        'depth',
+        # 'manual',
+        'configuration_type',
+        'value_type',
+        # 'default_parameter_code_manual_fews',
+        # 'timeserie_ref_status',
+        # 'dbf_file',
+        'dbf_index',
+        # 'dbf_valuefield_name',
+        # 'dbf_valuefield_type',
+        # 'dbf_valuefield_length',
+        # 'dbf_valuefield_decimals',
+        # 'dbf_manualfield_name'
+    )
+
+    list_filter = ('dbf_file',)
 
 
 admin.site.register(Configuration, ConfigurationAdmin)

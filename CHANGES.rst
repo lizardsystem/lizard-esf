@@ -7,6 +7,8 @@ Changelog of lizard-esf
 
 - Added functionality to export esf configurations into dbf.
 
+- Created fixture.
+
 
 0.5 (2012-02-02)
 ----------------
