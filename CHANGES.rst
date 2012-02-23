@@ -5,7 +5,7 @@ Changelog of lizard-esf
 0.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Removed fixture lizard_esf.
 
 
 0.6 (2012-02-23)
