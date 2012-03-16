@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.8 (unreleased)
+0.8 (2012-03-16)
 ----------------
 
 - Added extra fields to Configuration model.
