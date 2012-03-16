@@ -7,6 +7,8 @@ Changelog of lizard-esf
 
 - Added extra fields to Configuration model.
 
+- Configured testsettings.
+
 
 0.7 (2012-02-23)
 ----------------

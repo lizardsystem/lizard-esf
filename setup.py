@@ -18,7 +18,10 @@ install_requires = [
     'lizard-area',
     'lizard-fewsnorm',
     'lizard-ui >= 3.0',
+    'lizard-security',
     'pkginfo',
+    'celery',
+    'dbfpy',
     ],
 
 tests_require = [
