@@ -1,5 +1,6 @@
 # (c) Nelen & Schuurmans.  GPL licensed, see LICENSE.txt.
 
+import logging
 import re
 
 from django.core.urlresolvers import reverse
@@ -11,8 +12,7 @@ from lizard_fewsnorm.models import TimeSeriesCache
 
 from lizard_security.models import DataSet
 
-# from django.core.urlresolvers import reverse
-# from lizard_fewsnorm.models import TimeseriesKeys
+logger = logging.getLogger(__name__)
 
 
 def uncamel(model_name):
@@ -241,14 +241,35 @@ class AreaConfiguration(models.Model):
                     event = ts[0].get_latest_event()
                     output['auto_value'] = event.value
                     output['auto_value_ts'] = event.timestamp
-                except Exception, e:
-                    print 'error: '
-                    print e
+                except Exception:
                     output['auto_value'] = None
             else:
                 output['auto_value'] = None
 
         return output
+
+
+def get_auto_value(area, configuration):
+
+    if configuration.configuration_type.name == 'parameter':
+        auto_value = None
+    else:
+        ts = TimeSeriesCache.objects.filter(
+            geolocationcache__ident=area.ident,
+            parametercache__ident=configuration.default_parameter_code_manual_fews)
+        count = ts.count()
+        if count > 0:
+            if count > 1:
+                logger.warning('Found %d time series for %s (expected 0 or 1).',
+                    count, configuration.default_parameter_code_manual_fews)
+            try:
+                event = ts[0].get_latest_event()
+                auto_value = event
+            except Exception:
+                auto_value = None
+        else:
+            auto_value = None
+    return auto_value
 
 
 def get_data_main_esf(area):
@@ -280,13 +301,12 @@ def get_data_main_esf(area):
             rec['stars'] = None
             rec['stars_comment'] = 'expert schatting'
         else:
-            auto_value = None
-            auto_status = None
-            if auto_value:
+            auto_value = get_auto_value(area, config.configuration)
+            if auto_value is not None:
                 rec['source'] = 'auto'
-                rec['value'] = 0 #sauto_value.value
+                rec['value'] = auto_value.value
                 rec['source_info'] = '' #+ configurationdate?
-                rec['date'] = 0 #auto_value.timestamp
+                rec['date'] = auto_value.timestamp
                 rec['stars'] = 0 #auto_status.value
                 rec['stars_comment'] = None
             else:
@@ -308,9 +328,7 @@ def get_data_main_esf(area):
 
     output = []
     for i in range(1,10):
-        print i
         if i in data:
-            print data[i]
             output.append(data[i])
         else:
             output.append({
@@ -321,7 +339,7 @@ def get_data_main_esf(area):
             })
 
     return output
-            
+
 
 
 
