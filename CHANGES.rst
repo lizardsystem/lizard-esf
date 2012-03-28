@@ -5,7 +5,7 @@ Changelog of lizard-esf
 0.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Corrects the retrieval of ESF information of an area
 
 
 0.8 (2012-03-16)
