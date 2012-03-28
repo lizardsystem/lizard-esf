@@ -41,9 +41,12 @@ SITE_ID = 1
 INSTALLED_APPS = [
     'lizard_esf',
     'lizard_ui',
+    'lizard_security',
     'staticfiles',
     'compressor',
     'south',
+    'celery',
+    'dbfpy',
     'django_nose',
     'django_extensions',
     'django.contrib.admin',

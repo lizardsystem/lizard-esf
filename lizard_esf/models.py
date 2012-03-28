@@ -203,10 +203,13 @@ class AreaConfiguration(models.Model):
     manual_value = models.FloatField(
         blank=True, null=True,
     )
+    manual_text_value = models.CharField(max_length=256,
+                                         blank=True, null=True)
     comment = models.TextField(max_length=256, blank=True, default='-')
     last_edit_by = models.CharField(max_length=256, blank=True, default='-')
     last_edit_date = models.DateTimeField(auto_now=True)
     last_comment = models.CharField(max_length=256, blank=True, default='-')
+    fews_meta_info = models.CharField(max_length=128, null=True, blank=True)
 
     def get_mydump(self):
 
@@ -217,6 +220,7 @@ class AreaConfiguration(models.Model):
             'source_name': self.configuration.source_name,
             'manual': self.manual,
             'manual_value': self.manual_value,
+            'manual_text_value': self.manual_text_value,
             'type': self.configuration.value_type.name,
             'is_manual': self.configuration.manual,
             'config_type': self.configuration.configuration_type.name,
