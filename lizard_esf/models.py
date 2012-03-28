@@ -247,6 +247,25 @@ class AreaConfiguration(models.Model):
         return output
 
 
+def get_auto_value(area, configuration):
+
+    if configuration.configuration_type.name == 'parameter':
+        auto_value = None
+    else:
+        ts = TimeSeriesCache.objects.filter(
+            geolocationcache__ident=area.ident,
+            parametercache__ident=configuration.default_parameter_code_manual_fews)
+        if ts.count() > 0:
+            try:
+                event = ts[0].get_latest_event()
+                auto_value = event.value
+                auto_value_ts = event.timestamp
+            except Exception, e:
+                auto_value = None
+        else:
+            auto_value = None
+
+
 def get_data_main_esf(area):
     """
         return major data for the 9 esfs
@@ -276,9 +295,8 @@ def get_data_main_esf(area):
             rec['stars'] = None
             rec['stars_comment'] = 'expert schatting'
         else:
-            auto_value = None
-            auto_status = None
-            if auto_value:
+            auto_value = get_auto_value(area, config)
+            if auto_value is not None:
                 rec['source'] = 'auto'
                 rec['value'] = 0 #sauto_value.value
                 rec['source_info'] = '' #+ configurationdate?
@@ -317,7 +335,7 @@ def get_data_main_esf(area):
             })
 
     return output
-            
+
 
 
 
