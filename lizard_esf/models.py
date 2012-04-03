@@ -211,8 +211,13 @@ class AreaConfiguration(models.Model):
     last_comment = models.CharField(max_length=256, blank=True, default='-')
     fews_meta_info = models.CharField(max_length=128, null=True, blank=True)
 
-    def get_mydump(self):
+    def __unicode__(self):
+        return '%s %s' % (self.area, self.configuration)
 
+    def get_mydump(self):
+        """
+        Dump as dict.
+        """
         output = {
             'id': self.id,
             'config_id': self.configuration.id,
@@ -226,7 +231,9 @@ class AreaConfiguration(models.Model):
             'config_type': self.configuration.configuration_type.name,
             'comment': self.comment,
             'last_edit_by': self.last_edit_by,
-            'last_edit_date': self.last_edit_date
+            'last_edit_date': self.last_edit_date,
+            'iconCls': ('x-tree-custom-%s' %
+                        self.configuration.configuration_type.name),  # Icon style class
         }
         if self.configuration.configuration_type.name == 'parameter':
             output['auto_value'] = None
@@ -247,6 +254,44 @@ class AreaConfiguration(models.Model):
                 output['auto_value'] = None
 
         return output
+
+    @classmethod
+    def dump_tree(cls, area):
+        """
+        Dump tree of config and children for a specific area as dict.
+        """
+        def resolve_children(children, choices_dict):
+            """
+            Resolve the children using elements in choices_dict.
+
+            Children is a list of config-dicts with key 'config_id'
+            for each dict.
+            """
+            for child in children:
+                child['children'] = choices_dict.get(child['config_id'], [])
+                resolve_children(child['children'], choices_dict)
+
+        area_configs = cls.objects.filter(area=area).order_by(
+            'configuration__path')
+        config_dict = {}
+
+        # Put all nodes from area_configs into config_dict
+        # where the key is the config_id, None is root.
+        for area_config in area_configs:
+            config_parent = area_config.configuration.get_parent()
+            if config_parent:
+                parent_id = config_parent.id
+            else:
+                parent_id = None
+            if not parent_id in config_dict:
+                config_dict[parent_id] = []
+            config_dict[parent_id].append(area_config.get_mydump())
+
+        tree = {'id': -1, 'name': 'root'}
+        resolve_children(config_dict[None], config_dict)
+        tree['children'] = config_dict[None]
+
+        return tree
 
 
 def get_auto_value(area, configuration):
@@ -339,45 +384,6 @@ def get_data_main_esf(area):
             })
 
     return output
-
-
-
-
-
-def tree(config):
-    a = {}
-    for b in config:
-        if b.configuration.get_parent():
-            parent_id = b.configuration.get_parent().id
-        else:
-            parent_id = None
-            pass
-        config_id = b.configuration.id
-
-        if not parent_id in a:
-            a[parent_id] = []
-        if not config_id in a:
-            a[config_id] = []
-        a[parent_id].append(b.get_mydump())
-
-    tree = {'id': -1, 'name': 'root'}
-
-    tree['children'] = a[None]
-
-    for child in tree['children']:
-
-        child['children'] = a[child['config_id']]
-
-        for child_1 in child['children']:
-            child_1['children'] = a[child_1['config_id']]
-
-            for child_2 in child_1['children']:
-                child_2['children'] = a[child_2['config_id']]
-
-                for child_3 in child_2['children']:
-                    child_3['children'] = a[child_3['config_id']]
-
-    return tree
 
 
 class DBFConfiguration(models.Model):

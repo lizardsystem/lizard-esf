@@ -15,7 +15,6 @@ from lizard_esf.models import Configuration
 from lizard_esf.models import AreaConfiguration
 from lizard_esf.models import ValueType
 from lizard_esf.models import ConfigurationType
-from lizard_esf.models import tree
 
 from lizard_esf.forms import ConfigurationForm
 from lizard_esf.forms import NameForm
@@ -118,6 +117,7 @@ class ConfigurationDetailView(View):
         Configuration.objects.get(pk=pk).delete()
         return Response(status.HTTP_200_OK)
 
+
 class ConfigurationTreeView(View):
     """
     Treeview, basically a dump_bulk() from treebeard
@@ -130,16 +130,12 @@ class ConfigurationTreeView(View):
         area = Area.objects.get(ident=area)
         configs = Configuration.objects.exclude(esf_areaconfiguration_set__area=area)
 
-        print('%i nieuwe configs voor dit gebied'%configs.count())
+        # Why are AreaConfiguration objects created here?
+        # print('%i nieuwe configs voor dit gebied'%configs.count())
         for config in configs:
             AreaConfiguration.objects.get_or_create(configuration=config, area=area)
 
-
-        area_config = AreaConfiguration.objects.filter(area=area).order_by('configuration__path')
-
-        tree_data = tree(area_config)
-
-        return tree_data
+        return AreaConfiguration.dump_tree(area=area)
 
     def post(self, request, pk=None):
         if request.user.is_anonymous():

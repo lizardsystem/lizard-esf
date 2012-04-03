@@ -5,7 +5,9 @@ Changelog of lizard-esf
 0.10 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Added iconCls to esf configuration.
+
+- Modernized ESF tree calculation.
 
 
 0.9 (2012-03-28)
