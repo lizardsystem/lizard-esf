@@ -2,8 +2,8 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.11 (unreleased)
------------------
+0.10.1 (2012-04-03)
+-------------------
 
 - Removed __unicode__ from AreaConfiguration: it will sometimes give
   an error.
