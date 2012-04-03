@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.10 (unreleased)
+0.10 (2012-04-03)
 -----------------
 
 - Added iconCls to esf configuration.
