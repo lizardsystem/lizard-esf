@@ -211,8 +211,9 @@ class AreaConfiguration(models.Model):
     last_comment = models.CharField(max_length=256, blank=True, default='-')
     fews_meta_info = models.CharField(max_length=128, null=True, blank=True)
 
-    def __unicode__(self):
-        return '%s %s' % (self.area, self.configuration)
+    # Will sometimes give an unicode error.
+    # def __unicode__(self):
+    #     return '%s %s' % (self.area, self.configuration)
 
     def get_mydump(self):
         """
