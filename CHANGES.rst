@@ -2,12 +2,27 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.10 (unreleased)
+0.11 (unreleased)
 -----------------
 
 - Added functionality to export esf-configurations to dbf.
 
 - Implemented functioanlity to parse value of Configuration.default_parameter_code_manual_fews field.
+
+
+0.10.1 (2012-04-03)
+-------------------
+
+- Removed __unicode__ from AreaConfiguration: it will sometimes give
+  an error.
+
+
+0.10 (2012-04-03)
+-----------------
+
+- Added iconCls to esf configuration.
+
+- Modernized ESF tree calculation.
 
 
 0.9 (2012-03-28)
