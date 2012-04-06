@@ -25,17 +25,25 @@ def get_logger(handler, taskname, levelno):
 
 
 @task()
-def import_dbf(fews_meta_info=None,
-               esftype=None,
-               filepath=None):
+def import_dbf(taskname="",
+               username=None,
+               levelno=20,
+               data_set=None,
+               esftype=None):
     """
     Import esf configurations from dbf.
     """
-    dbfimporter = DBFImporter()
+    handler = get_handler(taskname, username)
+    logger = get_logger(handler, taskname, levelno)
+
+    dbfimporter = DBFImporter(logger)
     dbfimporter.esftype = esftype
-    dbfimporter.filepath = filepath
-    dbfimporter.fews_meta_info = fews_meta_info
+    dbfimporter.data_set = data_set
+    logger.info("Start import of '%s'." % esftype)
     dbfimporter.run()
+    logger.info("END IMPORT.")
+
+    logger.removeHandler(handler)
     return "<<import dbf>>"
 
 
@@ -77,7 +85,9 @@ def run_export_esf_to_dbf():
 
 def run_importdbf_task():
     """Run import_dbf task as test."""
-    kwargs = {'fews_meta_info': 'TEST INFO',
-              'esftype': 'esf2',
-              'filepath': '/tmp/aanafvoer_esf2.dbf'}
-    import_dbf(**kwargs)
+    kwargs = {'esftype': 'esf1',
+              'taskname': 'esf_import_dbf_waternet',
+              'username': 'admin',
+              'levelno': 20,
+              'data_set': 'Waternet'}
+    import_dbf.delay(**kwargs)

@@ -109,7 +109,8 @@ class DbfFile(models.Model):
 class Configuration(MP_Node):
     """
         ESF configuration.
-        Configuration of all objects, for visualisation and export of settings to Fews
+        Configuration of all objects,
+        for visualisation and export of settings to Fews
     """
 
     ESF_CHOICES = [(n, n) for n in range(-1, 10)]
@@ -211,6 +212,49 @@ class AreaConfiguration(models.Model):
     last_comment = models.CharField(max_length=256, blank=True, default='-')
     fews_meta_info = models.CharField(max_length=128, null=True, blank=True)
 
+    def get_manual_fews_code_part(self, value, partnumber):
+        """Return a substring of default_parameter_code_manual_fews field from 
+        configuration model. 
+        
+        Arguments:
+        value -- value of default_parameter_code_manual_few
+        partnumber -- position of element in value."""
+        element = None
+        separator = ','
+        try:
+            element = value.split(separator)[partnumber]
+        except Exception as ex:
+            logger.debug("lizard_esf.models.AreaConfiguration."\
+                            "get_manual_fews_code_part(): %s, value='%s'." % ( 
+                         ",".join(map(str, ex.args)), value))
+        return element
+
+    def update_filter_options(self, options):
+        """Update options dict with extra filters from value of
+        self.configuration.default_parameter_code_manual_fews field.
+
+        Arguments:
+        options -- type dict, containing query parameters
+                   for TimeSeriesCache
+        """
+        parametercache = self.get_manual_fews_code_part(
+            self.configuration.default_parameter_code_manual_fews, 0)
+        modulecache = self.get_manual_fews_code_part(
+            self.configuration.default_parameter_code_manual_fews, 1)
+        timestepcache = self.get_manual_fews_code_part(
+            self.configuration.default_parameter_code_manual_fews, 2)
+        qualifiersetcache = self.get_manual_fews_code_part(
+            self.configuration.default_parameter_code_manual_fews, 3)
+        
+        if parametercache is not None and parametercache != "":
+            options["parametercache__ident"] = parametercache
+        if modulecache is not None and modulecache != "":
+            options["modulecache__ident"] = modulecache
+        if timestepcache is not None and timestepcache != "":
+            options["timestepcache__ident"] = timestepcache
+        if qualifiersetcache is not None and qualifiersetcache != "":
+            options["qualifiersetcache__ident"] = qualifiersetcache
+        
     def get_mydump(self):
 
         output = {
@@ -232,9 +276,9 @@ class AreaConfiguration(models.Model):
             output['auto_value'] = None
             self.manual = None
         else:
-            ts = TimeSeriesCache.objects.filter(
-                geolocationcache__ident=self.area.ident,
-                parametercache__ident=self.configuration.default_parameter_code_manual_fews)
+            options = {"geolocationcache__ident": self.area.ident}
+            self.update_filter_options(options)
+            ts = TimeSeriesCache.objects.filter(**options)
 
             if ts.count() > 0:
                 try:

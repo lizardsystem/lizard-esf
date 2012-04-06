@@ -7,6 +7,8 @@ Changelog of lizard-esf
 
 - Added functionality to export esf-configurations to dbf.
 
+- Implemented functioanlity to parse value of Configuration.default_parameter_code_manual_fews field.
+
 
 0.9 (2012-03-28)
 ----------------
