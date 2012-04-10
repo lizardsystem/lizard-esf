@@ -5,7 +5,7 @@ Changelog of lizard-esf
 0.12 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Added functionality to import esf-configurations from dbf.
 
 
 0.11 (2012-04-10)
@@ -13,7 +13,7 @@ Changelog of lizard-esf
 
 - Added functionality to export esf-configurations to dbf.
 
-- Implemented functioanlity to parse value of Configuration.default_parameter_code_manual_fews field.
+- Implemented functionality to parse value of Configuration.default_parameter_code_manual_fews field.
 
 
 0.10.1 (2012-04-03)
