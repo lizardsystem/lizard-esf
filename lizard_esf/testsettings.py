@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'lizard_esf',
     'lizard_ui',
     'lizard_security',
+    'lizard_portal',
+    'lizard_task',
     'staticfiles',
     'compressor',
     'south',

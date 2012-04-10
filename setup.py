@@ -19,6 +19,8 @@ install_requires = [
     'lizard-fewsnorm',
     'lizard-ui >= 3.0',
     'lizard-security',
+    'lizard-portal',
+    'lizard-task',
     'pkginfo',
     'celery',
     'dbfpy',
