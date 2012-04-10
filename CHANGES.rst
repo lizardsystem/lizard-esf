@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.11 (unreleased)
+0.11 (2012-04-10)
 -----------------
 
 - Added functionality to export esf-configurations to dbf.
