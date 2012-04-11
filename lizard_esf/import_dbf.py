@@ -51,7 +51,12 @@ class DBFImporter(object):
         esftype_objects = DbfFile.objects.filter(name=self.esftype)
         if esftype_objects.exists():
             for v_config in v_configs:
-                dbf_instance = self._open_dbf(v_config.file_path)
+                dbf_instance = self._open_dbf(v_config.get_area_dbf())
+                if dbf_instance is None:
+                    msg = "Error on openning dbf %s" % v_config.get_area_dbf()
+                    status_tuple = (False, msg)
+                    self.validation_status(status_tuple, v_config)
+                    continue
                 status_tuple = self._import_esfs(
                     dbf_instance, v_config, esftype_objects[0])
                 self.validation_status(status_tuple, v_config)

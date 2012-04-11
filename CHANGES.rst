@@ -7,6 +7,8 @@ Changelog of lizard-esf
 
 - Added functionality to import esf-configurations from dbf.
 
+- Changed the way to retrieve a filepath of dbf.
+
 
 0.11 (2012-04-10)
 -----------------
