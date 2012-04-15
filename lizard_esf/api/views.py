@@ -149,7 +149,14 @@ class ConfigurationTreeView(View):
             del record['id']
             record['last_edit_by'] = request.user.get_full_name()
             record['last_edit_date'] = datetime.datetime.now()
+
             for (key, value) in record.items():
+                if key == 'manual_value' and value is not None:
+                    try:
+                        float(value)
+                    except ValueError:
+                        key = 'manual_text_value'
+
                 setattr(area_config, key, value)
             area_config.save()
 

@@ -123,13 +123,15 @@ class Configuration(MP_Node):
 
     name = models.CharField(max_length=128)
     code = models.CharField(max_length=128)
-    is_main_esf = models.IntegerField(null=True, choices=ESF_CHOICES,
+    is_main_esf = models.IntegerField(null=True, blank=True, choices=ESF_CHOICES,
                                       help_text='esf nummer voor indicatie van hoofd \'stoplichten\'')
 
     #settings for visualization
     graphgroup_on_expand = models.CharField(max_length=128, null=True, blank=True,
                                      help_text='Grafiek groep die aan gezet moet worden bij openen van dit element')
     source_name = models.CharField(max_length=128,
+                                   null=True,
+                                    blank=True,
                                      help_text='Meta data over de Bron waar de automatisch berekende waarde vandaan komt')
     expanded = models.BooleanField(default=False,
                                      help_text='Wordt volgens mij niet meer gebruikt')
@@ -141,6 +143,13 @@ class Configuration(MP_Node):
                                      help_text='Wat voor item is het (resultaat/ instelling/ etc)')
     value_type = models.ForeignKey(ValueType,
                                      help_text='Wat voor type is de waarde. Wordt gebruikt o.a. gebruikt voor editor')
+
+    #
+    base_config = models.ForeignKey('Configuration',
+                                    null=True,
+                                    blank=True,
+                                    help_text='link naar de basis parameter, die bij expert parameters wordt overschreven')
+
 
     #settings for getting actual values from Fews
     default_parameter_code_manual_fews = models.CharField(max_length=256,
@@ -187,7 +196,7 @@ class Configuration(MP_Node):
         )
 
     def __unicode__(self):
-        return self.name
+        return "%s (%i)"% (self.name, self.id)
 
 
 class AreaConfiguration(models.Model):
@@ -255,21 +264,24 @@ class AreaConfiguration(models.Model):
         if qualifiersetcache is not None and qualifiersetcache != "":
             options["qualifiersetcache__ident"] = qualifiersetcache
         
-    def get_mydump(self):
+    def get_mydump(self, full_config):
     # Will sometimes give an unicode error.
     # def __unicode__(self):
     #     return '%s %s' % (self.area, self.configuration)
         """
         Dump as dict.
         """
+        manual_value = self.manual_value;
+        if self.configuration.value_type.name == 'text':
+            manual_value = self.manual_text_value;
         output = {
             'id': self.id,
             'config_id': self.configuration.id,
             'name': self.configuration.name,
             'source_name': self.configuration.source_name,
             'manual': self.manual,
-            'manual_value': self.manual_value,
-            'manual_text_value': self.manual_text_value,
+            'manual_value': manual_value,
+            #'manual_text_value': self.manual_text_value,
             'type': self.configuration.value_type.name,
             'is_manual': self.configuration.manual,
             'config_type': self.configuration.configuration_type.name,
@@ -279,23 +291,34 @@ class AreaConfiguration(models.Model):
             'iconCls': ('x-tree-custom-%s' %
                         self.configuration.configuration_type.name),  # Icon style class
         }
-        if self.configuration.configuration_type.name == 'parameter':
+        if self.configuration.configuration_type.name in ['folder', 'base_setting']:
             output['auto_value'] = None
             self.manual = None
+        elif self.configuration.configuration_type.name in ['expert_setting', 'info_setting']:
+            ref_rec = full_config.filter(configuration = self.configuration.base_config)
+
+            if len(ref_rec) > 0:
+                output['auto_value'] = ref_rec[0].manual_value
+            else:
+                output['auto_value'] = 'ref mist'
         else:
+            #get value from fews
             options = {"geolocationcache__ident": self.area.ident}
             self.update_filter_options(options)
-            ts = TimeSeriesCache.objects.filter(**options)
-
-            if ts.count() > 0:
-                try:
-                    event = ts[0].get_latest_event()
-                    output['auto_value'] = event.value
-                    output['auto_value_ts'] = event.timestamp
-                except Exception:
-                    output['auto_value'] = None
+            if not 'parametercache__ident' in options:
+                output['auto_value'] = -999
             else:
-                output['auto_value'] = None
+                ts = TimeSeriesCache.objects.filter(**options)
+
+                if ts.count() > 0:
+                    try:
+                        event = ts[0].get_latest_event()
+                        output['auto_value'] = event.value
+                        output['auto_value_ts'] = event.timestamp
+                    except Exception:
+                        output['auto_value'] = None
+                else:
+                    output['auto_value'] = None
 
         return output
 
@@ -329,7 +352,7 @@ class AreaConfiguration(models.Model):
                 parent_id = None
             if not parent_id in config_dict:
                 config_dict[parent_id] = []
-            config_dict[parent_id].append(area_config.get_mydump())
+            config_dict[parent_id].append(area_config.get_mydump(area_configs))
 
         tree = {'id': -1, 'name': 'root'}
         resolve_children(config_dict[None], config_dict)

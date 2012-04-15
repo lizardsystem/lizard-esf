@@ -5,7 +5,11 @@ Changelog of lizard-esf
 0.13 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- changed icons in tree
+
+- fixed saving and loading of text values in tree
+
+- added overwriteble setting fields (expert_setting)
 
 
 0.12 (2012-04-11)
