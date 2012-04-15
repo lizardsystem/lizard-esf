@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.13 (unreleased)
+0.13 (2012-04-15)
 -----------------
 
 - changed icons in tree
