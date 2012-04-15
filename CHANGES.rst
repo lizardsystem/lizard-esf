@@ -5,7 +5,7 @@ Changelog of lizard-esf
 0.14 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- missing migration
 
 
 0.13 (2012-04-15)
