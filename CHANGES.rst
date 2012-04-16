@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.14 (unreleased)
+0.14 (2012-04-16)
 -----------------
 
 - Fixed an error in the import of ESF configurations.
