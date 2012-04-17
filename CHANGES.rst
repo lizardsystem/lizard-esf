@@ -5,7 +5,8 @@ Changelog of lizard-esf
 0.15 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Shows the Path and Depth values again in the admin screen for
+  Configuration(s).
 
 
 0.14 (2012-04-16)
