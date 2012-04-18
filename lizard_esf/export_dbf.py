@@ -94,18 +94,14 @@ class DBFExporter(object):
         self.field_to_dbf(out, 'GAFIDENT', 'C', 24)
         self.field_to_dbf(out, 'GAFNAME', 'C', 100)
         for item in mapping:
-            if self.is_empty_value(item.dbf_valuefield_name):
+            if self.is_nonempty_value(item.dbf_valuefield_name):
                 self.field_to_dbf(out,
                                   item.dbf_valuefield_name,
                                   item.dbf_valuefield_type,
                                   item.dbf_valuefield_length,
                                   item.dbf_valuefield_decimals)
-            if self.is_empty_value(item.dbf_manualfield_name):
-                self.field_to_dbf(out,
-                                  item.dbf_manualfield_name,
-                                  item.dbf_valuefield_type,
-                                  item.dbf_valuefield_length,
-                                  item.dbf_valuefield_decimals)
+            if self.is_nonempty_value(item.dbf_manualfield_name):
+                self.field_to_dbf(out, item.dbf_manualfield_name, 'L')
 
     def store_data(self, out, area, areaconfigurations):
         """
@@ -125,17 +121,20 @@ class DBFExporter(object):
             manual_value = item.manual_value
             value = item.manual
 
-            if self.is_empty_value(
-                dbf_manualfield_name) and self.is_empty_value(value):
+            if self.is_nonempty_value(dbf_manualfield_name) and \
+                self.is_nonempty_value(value):
                 rec[dbf_manualfield_name] = value
 
-            if self.is_empty_value(dbf_valuefield_name):
+            if self.is_nonempty_value(dbf_valuefield_name):
                 if item.configuration.dbf_valuefield_type == 'C':
-                    if self.is_empty_value(manual_text_value):
+                    if self.is_nonempty_value(manual_text_value):
                         rec[dbf_valuefield_name] = manual_text_value
                 else:
-                    if self.is_empty_value(manual_value):
+                    if self.is_nonempty_value(manual_value):
+                        if item.configuration.dbf_valuefield_type == 'L':
+                            manual_value = manual_value > 0.0
                         rec[dbf_valuefield_name] = manual_value
+
         rec.store()
 
     def file_path(self, save_to, filename, extention):
@@ -163,8 +162,5 @@ class DBFExporter(object):
             filepath = None
         return filepath
 
-    def is_empty_value(self, value):
-        """Check passed value."""
-        if ((value is None) or (value == '')):
-            return False
-        return True
+    def is_nonempty_value(self, value):
+        return ((value is not None) and (value != ''))
