@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.15 (unreleased)
+0.15 (2012-04-18)
 -----------------
 
 - Shows the Path and Depth values again in the admin screen for
