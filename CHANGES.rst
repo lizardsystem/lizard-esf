@@ -8,6 +8,8 @@ Changelog of lizard-esf
 - Shows the Path and Depth values again in the admin screen for
   Configuration(s).
 
+- Added 'L'(logical) option to 'dbf_value_type' field in Configuration model.
+
 
 0.14 (2012-04-16)
 -----------------

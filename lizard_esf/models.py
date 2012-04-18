@@ -119,6 +119,7 @@ class Configuration(MP_Node):
         ('C', 'Text'),
         ('N', 'Number'),
         ('D', 'Date'),
+        ('L', 'Logical'),
     )
 
     name = models.CharField(max_length=128)
