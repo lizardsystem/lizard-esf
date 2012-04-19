@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.17 (unreleased)
+0.17 (2012-04-19)
 -----------------
 
 - Bugfix esf overview: it now works for auto values. Removed "double
