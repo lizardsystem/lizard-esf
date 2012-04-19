@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.16 (unreleased)
+0.16 (2012-04-19)
 -----------------
 
 - Adds a check to correct the output of logical fields to dbf.
