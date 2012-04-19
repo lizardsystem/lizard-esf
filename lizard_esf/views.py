@@ -21,7 +21,6 @@ def esf_overview(request, area_ident):
     else:
         template='esf_overview_large.html'
 
-
     return render_to_response(
         template,
         {'esfs': esf_data})

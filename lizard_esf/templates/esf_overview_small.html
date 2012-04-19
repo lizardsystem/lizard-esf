@@ -8,7 +8,7 @@
 
         <style type="text/css">
         body {
-            
+
             font-family: 'Helvetica', sans-serif;
         }
         .esfTableSmall td {
@@ -44,7 +44,7 @@
             {% cycle '<tr>' '' ''  as start %}
             <td data-qtitle="{{ esf.name }}" data-qwidth="200"
                 data-qtip="{% include "esf_tip.html" %}">
-            <span class="{{ esf.judgment }}">{{ esf.nr }}</span>
+            <span class="{{ esf.judgement }}">{{ esf.nr }}</span>
             {% comment %}<span class="name">{{ esf.name }}</span>{% endcomment %}
             </td>
             {% cycle '' '' '<tr/>' as end silent%}

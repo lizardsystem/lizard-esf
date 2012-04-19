@@ -223,9 +223,9 @@ class AreaConfiguration(models.Model):
     fews_meta_info = models.CharField(max_length=128, null=True, blank=True)
 
     def get_manual_fews_code_part(self, value, partnumber):
-        """Return a substring of default_parameter_code_manual_fews field from 
-        configuration model. 
-        
+        """Return a substring of default_parameter_code_manual_fews field from
+        configuration model.
+
         Arguments:
         value -- value of default_parameter_code_manual_few
         partnumber -- position of element in value."""
@@ -235,7 +235,7 @@ class AreaConfiguration(models.Model):
             element = value.split(separator)[partnumber]
         except Exception as ex:
             logger.debug("lizard_esf.models.AreaConfiguration."\
-                            "get_manual_fews_code_part(): %s, value='%s'." % ( 
+                            "get_manual_fews_code_part(): %s, value='%s'." % (
                          ",".join(map(str, ex.args)), value))
         return element
 
@@ -255,7 +255,7 @@ class AreaConfiguration(models.Model):
             self.configuration.default_parameter_code_manual_fews, 2)
         qualifiersetcache = self.get_manual_fews_code_part(
             self.configuration.default_parameter_code_manual_fews, 3)
-        
+
         if parametercache is not None and parametercache != "":
             options["parametercache__ident"] = parametercache
         if modulecache is not None and modulecache != "":
@@ -264,11 +264,12 @@ class AreaConfiguration(models.Model):
             options["timestepcache__ident"] = timestepcache
         if qualifiersetcache is not None and qualifiersetcache != "":
             options["qualifiersetcache__ident"] = qualifiersetcache
-        
-    def get_mydump(self, full_config):
+
     # Will sometimes give an unicode error.
     # def __unicode__(self):
     #     return '%s %s' % (self.area, self.configuration)
+
+    def get_mydump(self, full_config):
         """
         Dump as dict.
         """
@@ -362,27 +363,29 @@ class AreaConfiguration(models.Model):
         return tree
 
 
-def get_auto_value(area, configuration):
+# def get_auto_value(area, configuration):
 
-    if configuration.configuration_type.name == 'parameter':
-        auto_value = None
-    else:
-        ts = TimeSeriesCache.objects.filter(
-            geolocationcache__ident=area.ident,
-            parametercache__ident=configuration.default_parameter_code_manual_fews)
-        count = ts.count()
-        if count > 0:
-            if count > 1:
-                logger.warning('Found %d time series for %s (expected 0 or 1).',
-                    count, configuration.default_parameter_code_manual_fews)
-            try:
-                event = ts[0].get_latest_event()
-                auto_value = event
-            except Exception:
-                auto_value = None
-        else:
-            auto_value = None
-    return auto_value
+#     if configuration.configuration_type.name == 'parameter':
+#         auto_value = None
+#     else:
+#         ts = TimeSeriesCache.objects.filter(
+#             geolocationcache__ident=area.ident,
+#             parametercache__ident=configuration.default_parameter_code_manual_fews)
+#         count = ts.count()
+#         print 'asdf'
+#         print ts
+#         if count > 0:
+#             if count > 1:
+#                 logger.warning('Found %d time series for %s (expected 0 or 1).',
+#                     count, configuration.default_parameter_code_manual_fews)
+#             try:
+#                 event = ts[0].get_latest_event()
+#                 auto_value = event
+#             except Exception:
+#                 auto_value = None
+#         else:
+#             auto_value = None
+#     return auto_value
 
 
 def get_data_main_esf(area):
@@ -414,12 +417,17 @@ def get_data_main_esf(area):
             rec['stars'] = None
             rec['stars_comment'] = 'expert schatting'
         else:
-            auto_value = get_auto_value(area, config.configuration)
-            if auto_value is not None:
+            #auto_value = get_auto_value(area, config.configuration)
+            # Why "get_auto_value" if get_mydump does exactly what's needed?
+            config_dump = config.get_mydump([config])
+
+            # I *think* this determines auto/manual, not "is_manual"
+            if config_dump['manual'] == 0:
+                rec['value'] = config_dump['auto_value']
                 rec['source'] = 'auto'
-                rec['value'] = auto_value.value
                 rec['source_info'] = '' #+ configurationdate?
-                rec['date'] = auto_value.timestamp
+                # Bad configuration (?) leads to auto_value -999 and no auto_value_ts.
+                rec['date'] = config_dump.get('auto_value_ts', None)
                 rec['stars'] = 0 #auto_status.value
                 rec['stars_comment'] = None
             else:
@@ -431,11 +439,11 @@ def get_data_main_esf(area):
                 rec['stars_comment'] = 'niet beschikbaar'
 
         if rec['value'] == 1:
-            rec['judgment'] = 'critical'
+            rec['judgement'] = 'critical'
         elif rec['value'] == 2:
-            rec['judgment'] = 'ok'
+            rec['judgement'] = 'ok'
         else:
-            rec['judgment'] = 'novalue'
+            rec['judgement'] = 'novalue'
         #critical
         data[config.configuration.is_main_esf] = rec
 
@@ -445,7 +453,7 @@ def get_data_main_esf(area):
             output.append(data[i])
         else:
             output.append({
-                'judgment': 'novalue',
+                'judgement': 'novalue',
                 'name': i,
                 'nr': i,
                 'stars_comment': 'niet beschikbaar'

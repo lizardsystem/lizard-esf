@@ -8,7 +8,7 @@
 
         <style type="text/css">
         body {
-            
+
             font-family: 'Helvetica', sans-serif;
         }
         .esfTableBig td {
@@ -32,7 +32,7 @@
 
         {% for esf in esfs %}
             {% cycle '<tr>' '' ''  as start %}
-            <td class="{{ esf.judgment }}" data-qtitle="{{ esf.name }}" data-qwidth="200"
+            <td class="{{ esf.judgement }}" data-qtitle="{{ esf.name }}" data-qwidth="200"
                 data-qtip="{% include "esf_tip.html" %}">
                 <img src="/static_media/lizard_esf/images/{{ esf.nr }}.png">
                 {% if esf.stars %}
