@@ -5,6 +5,7 @@ import os
 
 from lizard_esf.models import AreaConfiguration
 from lizard_esf.models import Configuration
+from lizard_esf.models import DbfFile
 
 from lizard_area.models import Area
 
@@ -50,9 +51,10 @@ class DBFExporter(object):
             return
 
         self.logger.debug("Creating dbf file: %s." % filepath)
-        out = Dbf(filepath, new=True)
 
-        self.fields_to_dbf(configurations, out)
+        self.create_out(filepath)
+
+        self.fields_to_dbf(configurations)
 
         counter = 0
         for area in areas:
@@ -61,16 +63,16 @@ class DBFExporter(object):
                 area=area)
             counter = counter + len(areaconfigurations)
             if areaconfigurations.exists():
-                self.store_data(out, area, areaconfigurations)
+                self.store_data(area, areaconfigurations)
         self.logger.debug("Processed %d areaconfigurations." % counter)
-        out.close()
+
+        self.close_out()
 
     def field_to_dbf(
-        self, out, f_name, f_type, f_length=None, f_decimals=None):
+        self, f_name, f_type, f_length=None, f_decimals=None):
         """Add a field into passed dbf.
 
         Arguments:
-        out -- instance of DBF file
         f_name -- field name as string where len(f_name)<= 10
         f_type -- field type as string (C, D, N)
         f_length -- decimals as integer
@@ -81,33 +83,32 @@ class DBFExporter(object):
         if f_length is not None and f_decimals is not None:
             field_options.append(f_decimals)
         try:
-            out.addField(tuple(field_options))
+            self.add_field_out(field_options)
         except Exception as ex:
             self.logger.error(','.join(map(str, ex.args)))
 
-    def fields_to_dbf(self, mapping, out):
+    def fields_to_dbf(self, mapping):
         """
         Add fields into dbf file.
         Avoid fields with None or empty value.
         """
-        self.field_to_dbf(out, 'GAF_ID', 'N', 9, 0)
-        self.field_to_dbf(out, 'GAFIDENT', 'C', 24)
-        self.field_to_dbf(out, 'GAFNAME', 'C', 100)
+        self.field_to_dbf(u'GAF_ID', 'N', 9, 0)
+        self.field_to_dbf(u'GAFIDENT', 'C', 24)
+        self.field_to_dbf(u'GAFNAME', 'C', 100)
         for item in mapping:
             if self.is_nonempty_value(item.dbf_valuefield_name):
-                self.field_to_dbf(out,
-                                  item.dbf_valuefield_name,
+                self.field_to_dbf(item.dbf_valuefield_name,
                                   item.dbf_valuefield_type,
                                   item.dbf_valuefield_length,
                                   item.dbf_valuefield_decimals)
             if self.is_nonempty_value(item.dbf_manualfield_name):
-                self.field_to_dbf(out, item.dbf_manualfield_name, 'L')
+                self.field_to_dbf(item.dbf_manualfield_name, 'L')
 
-    def store_data(self, out, area, areaconfigurations):
+    def store_data(self, area, areaconfigurations):
         """
         Store data into dbf file.
         """
-        rec = out.newRecord()
+        rec = self.new_record()
         rec['GAF_ID'] = area.id
         rec['GAFIDENT'] = area.ident
         rec['GAFNAME'] = area.name
@@ -135,9 +136,9 @@ class DBFExporter(object):
                             manual_value = manual_value > 0.0
                         rec[dbf_valuefield_name] = manual_value
 
-        rec.store()
+        self.store_record(rec)
 
-    def file_path(self, save_to, filename, extention):
+    def file_path(self, save_to, filename, extension):
         """
         Create absolute filepath.
 
@@ -156,7 +157,7 @@ class DBFExporter(object):
             success = False
 
         if success:
-            filename = ".".join((filename, extention))
+            filename = ".".join((filename, extension))
             filepath = os.path.abspath(os.path.join(save_to, filename))
         else:
             filepath = None
@@ -164,3 +165,58 @@ class DBFExporter(object):
 
     def is_nonempty_value(self, value):
         return ((value is not None) and (value != ''))
+
+    def create_out(self, file_path):
+        self.out = Dbf(file_path, new=True)
+
+    def add_field_out(self, field_options):
+        self.out.addField(tuple(field_options))
+
+    def close_out(self):
+        self.out.close()
+
+    def new_record(self):
+        return self.out.newRecord()
+
+    def store_record(self, rec):
+        rec.store()
+
+
+class DBFExporterToDict(DBFExporter):
+    """Implements the export of a DBF to a dictionary."""
+
+    def __init__(self, *args, **kwargs):
+        DBFExporter.__init__(self, *args, **kwargs)
+
+    def file_path(self, save_to, filename, extension):
+        return "don't care"
+
+    def create_out(self, file_path):
+        self.out = []
+
+    def add_field_out(self, field_options):
+        pass
+
+    def close_out(self):
+        pass
+
+    def new_record(self):
+        return {}
+
+    def store_record(self, rec):
+        self.out.append(rec)
+
+class ESFRecords(object):
+
+    def retrieve_records(self, config):
+        """Return the list of records from the given configuration.
+
+        Each record is specified as a dict from attribute name to attribute
+        value.
+
+        """
+        exporter = DBFExporterToDict()
+        dbf_file = DbfFile.objects.get(name=config.config_type)
+        exporter.export_esf_configurations(config.data_set, "don't care",
+            dbf_file, "don't care")
+        return exporter.out
