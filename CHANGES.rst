@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.18 (unreleased)
+0.18 (2012-04-26)
 -----------------
 
 - Added functionality to retrieve data from fews database
