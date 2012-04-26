@@ -5,7 +5,7 @@ Changelog of lizard-esf
 0.19 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Added migration schema.
 
 
 0.18 (2012-04-26)
