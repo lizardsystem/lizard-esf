@@ -5,7 +5,10 @@ Changelog of lizard-esf
 0.18 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Added functionality to retrieve data from fews database
+  by related location id for esf-configurations. To use it 
+  fill 'related_location' field of Configuration model in 
+  django admin interface. 
 
 
 0.17 (2012-04-19)
