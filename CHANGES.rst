@@ -5,7 +5,8 @@ Changelog of lizard-esf
 0.20 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Adds functionality to export an ESF configuration to a list instead of a DBF
+  file (required to compute a diff of a new and an existing ESF configuration).
 
 
 0.19 (2012-04-26)
@@ -18,9 +19,9 @@ Changelog of lizard-esf
 -----------------
 
 - Added functionality to retrieve data from fews database
-  by related location id for esf-configurations. To use it 
-  fill 'related_location' field of Configuration model in 
-  django admin interface. 
+  by related location id for esf-configurations. To use it
+  fill 'related_location' field of Configuration model in
+  django admin interface.
 
 
 0.17 (2012-04-19)
