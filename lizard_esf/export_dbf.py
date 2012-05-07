@@ -204,19 +204,7 @@ class DBFExporterToDict(DBFExporter):
         return {}
 
     def store_record(self, rec):
-        self.out.append(rec)
-
-class ESFRecords(object):
-
-    def retrieve_records(self, config):
-        """Return the list of records from the given configuration.
-
-        Each record is specified as a dict from attribute name to attribute
-        value.
-
-        """
-        exporter = DBFExporterToDict()
-        dbf_file = DbfFile.objects.get(name=config.config_type)
-        exporter.export_esf_configurations(config.data_set, "don't care",
-            dbf_file, "don't care")
-        return exporter.out
+        # rec is a dictionary whose keys specify the field names of DBF
+        # files. As the keys will be compared to the field names, we upper case
+        # the keys explicitly.
+        self.out.append(dict((k.upper(), v) for k, v in rec.items()))
