@@ -5,7 +5,6 @@ import os
 
 from lizard_esf.models import AreaConfiguration
 from lizard_esf.models import Configuration
-from lizard_esf.models import DbfFile
 
 from lizard_area.models import Area
 
@@ -92,9 +91,8 @@ class DBFExporter(object):
         Add fields into dbf file.
         Avoid fields with None or empty value.
         """
-        self.field_to_dbf(u'GAF_ID', 'N', 9, 0)
         self.field_to_dbf(u'GAFIDENT', 'C', 24)
-        self.field_to_dbf(u'GAFNAME', 'C', 100)
+        self.field_to_dbf(u'GAFNAAM', 'C', 100)
         for item in mapping:
             if self.is_nonempty_value(item.dbf_valuefield_name):
                 self.field_to_dbf(item.dbf_valuefield_name,
@@ -109,9 +107,8 @@ class DBFExporter(object):
         Store data into dbf file.
         """
         rec = self.new_record()
-        rec['GAF_ID'] = area.id
         rec['GAFIDENT'] = area.ident
-        rec['GAFNAME'] = area.name
+        rec['GAFNAAM'] = area.name
 
         for item in areaconfigurations:
 
