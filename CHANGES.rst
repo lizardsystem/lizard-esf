@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.20 (unreleased)
+0.20 (2012-05-08)
 -----------------
 
 - Adds functionality to export an ESF configuration to a list instead of a DBF
