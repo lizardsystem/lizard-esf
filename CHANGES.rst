@@ -5,7 +5,8 @@ Changelog of lizard-esf
 0.21 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fixes the spelling of the 'GAFNAAM' DBF column (which was spelled as
+  'GAFNAME').
 
 
 0.20 (2012-05-08)
