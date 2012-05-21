@@ -1,0 +1,41 @@
+{% load workspaces %}
+{% load utility %}
+{% load history_extras %}
+
+
+<div id="textual" class="lizard">
+  <h2>ESF-configuratie voor: {{ view.area.title }}</h2>
+  <table class="generic-table">
+    <thead>
+      <tr>
+        <td>Gebruiker</td>
+        <td>Registratie</td>
+        <td>Samenvatting</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for h in view.history %}
+      <tr>
+        <td>{{h.user}}</td>
+        <td>{{h.datetime|format_date_string}}</td>
+        <td>{{h.summary}}</td>
+        <td>
+          <a href="javascript:Ext.getCmp('portalWindow').linkToPopup(
+            'Archiefexemplaar: ESF-configuratie voor:
+            {{ view.area.title }}
+            ({{h.datetime|format_date_string}})',
+            '/esf/archive/{{view.area.ident}}/{{h.log_entry_id}}',
+            {},
+            {},
+            false,
+            'component',
+            false,
+            true
+            )">Archiefexemplaar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

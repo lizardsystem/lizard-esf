@@ -19,6 +19,7 @@ install_requires = [
     'lizard-fewsnorm',
     'lizard-ui >= 3.0',
     'lizard-security',
+    'lizard-history',
     'lizard-portal',
     'lizard-task',
     'pkginfo',

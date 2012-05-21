@@ -6,6 +6,9 @@ from django.contrib import admin
 
 from lizard_ui.urls import debugmode_urlpatterns
 
+from lizard_esf.views import EsfConfigurationHistoryView
+from lizard_esf.views import EsfConfigurationArchiveView
+
 admin.autodiscover()
 
 API_URL_NAME = 'lizard_esf_api_root'
@@ -15,9 +18,17 @@ urlpatterns = patterns(
     '',
     (r'^admin/', include(admin.site.urls)),
     (r'^api/', include('lizard_esf.api.urls')),
-
-     url(r'^esf_overview/(?P<area_ident>.*)/$',
-         'lizard_esf.views.esf_overview',
-         name="esf_overview"),
+    url(r'^esf_overview/(?P<area_ident>.*)/$',
+        'lizard_esf.views.esf_overview',
+        name='esf_overview'
+    ),
+    (r'^history/$',
+     EsfConfigurationHistoryView.as_view(),
+     {},
+     "lizard_esf.history"),
+    (r'^archive/(?P<object_id>\d+)/(?P<log_entry_id>\d+)/$',
+     EsfConfigurationArchiveView.as_view(),
+     {},
+     "lizard_esf.archive"),
     )
 urlpatterns += debugmode_urlpatterns()

@@ -227,6 +227,10 @@ class AreaConfiguration(models.Model):
         Areaconfiguration.
         The values of the configuration fields for each area.
     """
+
+    # View whose data to store via lizard_history.
+    HISTORY_DATA_VIEW = ('lizard_esf.api.views.ConfigurationTreeView')
+
     area = models.ForeignKey(Area, related_name='esf_areaconfiguration_set')
     configuration = models.ForeignKey(
         Configuration,

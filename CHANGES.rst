@@ -5,7 +5,7 @@ Changelog of lizard-esf
 0.22 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Add urls and views for history of esf configuration.
 
 
 0.21 (2012-05-09)
