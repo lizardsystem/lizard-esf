@@ -7,6 +7,8 @@ Changelog of lizard-esf
 
 - Add urls and views for history of esf configuration.
 
+- Add template for extjs component for esf tree history.
+
 
 0.21 (2012-05-09)
 -----------------
