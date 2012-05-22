@@ -229,7 +229,7 @@ class AreaConfiguration(models.Model):
     """
 
     # View whose data to store via lizard_history.
-    HISTORY_DATA_VIEW = ('lizard_esf.api.views.ConfigurationTreeView')
+    HISTORY_DATA_VIEW = 'lizard_esf.api.views.ConfigurationTreeView'
 
     area = models.ForeignKey(Area, related_name='esf_areaconfiguration_set')
     configuration = models.ForeignKey(

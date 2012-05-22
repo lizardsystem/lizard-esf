@@ -12,7 +12,10 @@ from lizard_esf.models import (
 
 from lizard_area.models import Area
 
-from lizard_history.utils import get_esf_history
+from lizard_history.utils import (
+    get_esf_history,
+    get_history,
+)
 
 
 def esf_overview(request, area_ident):
@@ -66,6 +69,25 @@ class EsfConfigurationArchiveView(AppView):
     """
     Readonly esf tree.
     """
+    def history(self):
+        """
+        Return history.
+        """
+        if not hasattr(self, '_history'):
+            self._history = get_history(
+                log_entry_id=self.log_entry_id,
+                include_data=False,
+            )
+        return self._history
+    
+    def area(self):
+        """
+        Return an area.
+        """
+        if not hasattr(self, '_area'):
+            self._area = Area.objects.get(
+                ident=self.area_ident)
+        return self._area
 
     def get(self, request, *args, **kwargs):
         """
@@ -73,9 +95,11 @@ class EsfConfigurationArchiveView(AppView):
         specific log_entry.
         """
         if request.user.is_authenticated():
-            self.template_name = 'lizard_annotation/annotation_form_read_only.js'
-            self.object_id = kwargs.get('object_id')
+            self.template_name = 'lizard_esf/read_only_tree.js'
             self.log_entry_id = kwargs.get('log_entry_id')
+            # For the special case of esf trees, the area_ident is
+            # stored in the object_repr field of the log_entry.
+            self.area_ident = self.history()['object_repr']
         else:
             self.template_name = 'portals/geen_toegang.js'
         return super(

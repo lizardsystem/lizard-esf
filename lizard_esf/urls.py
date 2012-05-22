@@ -26,7 +26,7 @@ urlpatterns = patterns(
      EsfConfigurationHistoryView.as_view(),
      {},
      "lizard_esf.history"),
-    (r'^archive/(?P<object_id>\d+)/(?P<log_entry_id>\d+)/$',
+    (r'^archive/(?P<log_entry_id>\d+)/$',
      EsfConfigurationArchiveView.as_view(),
      {},
      "lizard_esf.archive"),
