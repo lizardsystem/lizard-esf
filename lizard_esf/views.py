@@ -13,7 +13,7 @@ from lizard_esf.models import (
 from lizard_area.models import Area
 
 from lizard_history.utils import (
-    get_esf_history,
+    get_specific_history,
     get_history,
 )
 
@@ -38,7 +38,7 @@ def esf_overview(request, area_ident):
 
 class EsfConfigurationHistoryView(AppView):
     """
-    Show annotation history
+    Show esf history
     """
     template_name='lizard_esf/esf_history.html'
 
@@ -56,7 +56,10 @@ class EsfConfigurationHistoryView(AppView):
         Return history.
         """
         if not hasattr(self, '_history'):
-            self._history = get_esf_history(self.area())
+            self._history = get_specific_history(
+                [AreaConfiguration],
+                self.area(),
+            )
         return self._history
     
     def get(self, request, *args, **kwargs):
