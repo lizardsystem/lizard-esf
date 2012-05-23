@@ -9,6 +9,8 @@ Changelog of lizard-esf
 
 - Add template for extjs component for esf tree history.
 
+- Fix area not displaying in history form.
+
 
 0.21 (2012-05-09)
 -----------------
