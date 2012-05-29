@@ -11,6 +11,8 @@ Changelog of lizard-esf
 
 - Fix area not displaying in history form.
 
+- Main esf overview and editor
+
 
 0.21 (2012-05-09)
 -----------------
