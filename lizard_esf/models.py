@@ -292,6 +292,33 @@ class AreaConfiguration(models.Model):
         if qualifiersetcache is not None and qualifiersetcache != "":
             options["qualifiersetcache__ident"] = qualifiersetcache
 
+    def update_filter_options_esf_status(self, options):
+        """Update options dict with extra filters from value of
+        self.configuration.timeserie_ref_status field.
+
+        Arguments:
+        options -- type dict, containing query parameters
+                   for TimeSeriesCache
+        """
+
+        parametercache = self.get_manual_fews_code_part(
+            self.configuration.timeserie_ref_status, 0)
+        modulecache = self.get_manual_fews_code_part(
+            self.configuration.timeserie_ref_status, 1)
+        timestepcache = self.get_manual_fews_code_part(
+            self.configuration.timeserie_ref_status, 2)
+        qualifiersetcache = self.get_manual_fews_code_part(
+            self.configuration.timeserie_ref_status, 3)
+
+        if parametercache is not None and parametercache != "":
+            options["parametercache__ident"] = parametercache
+        if modulecache is not None and modulecache != "":
+            options["modulecache__ident"] = modulecache
+        if timestepcache is not None and timestepcache != "":
+            options["timestepcache__ident"] = timestepcache
+        if qualifiersetcache is not None and qualifiersetcache != "":
+            options["qualifiersetcache__ident"] = qualifiersetcache
+
     def create_options(self):
         """Create options dict to query fews database."""
         options = {}
@@ -368,7 +395,7 @@ class AreaConfiguration(models.Model):
             options = self.create_options()
             self.update_filter_options(options)
             if not 'parametercache__ident' in options:
-                output['auto_value'] = -999
+                output['auto_value'] =  None
             else:
                 ts = TimeSeriesCache.objects.filter(**options)
 
@@ -484,14 +511,28 @@ def get_data_main_esf(area):
             config_dump = config.get_mydump([config])
 
             # I *think* this determines auto/manual, not "is_manual"
-            if config_dump['manual'] == 0:
+            if config_dump['auto_value']:
                 rec['value'] = config_dump['auto_value']
                 rec['source'] = 'auto'
                 rec['source_info'] = ''  # + configurationdate?
                 # Bad configuration (?) leads to auto_value -999 and no auto_value_ts.
                 rec['date'] = config_dump.get('auto_value_ts', None)
-                rec['stars'] = 0  # auto_status.value
-                rec['stars_comment'] = None
+                options = config.create_options()
+                config.update_filter_options_esf_status(options)
+                if not 'parametercache__ident' in options:
+                    rec['stars'] = 0
+                else:
+                    ts = TimeSeriesCache.objects.filter(**options)
+                    if ts.count() > 0:
+                        try:
+                            event = ts[0].get_latest_event()
+                            rec['stars'] = event.value
+                        except Exception:
+                            rec['stars'] = None
+                    else:
+                        rec['stars'] = None
+
+                    rec['stars_comment'] = ''
             else:
                 rec['value'] = 0
                 rec['source'] = 'novalue'
@@ -515,7 +556,7 @@ def get_data_main_esf(area):
             output.append(data[i])
         else:
             output.append({
-                'judgement': 'novalue',
+                'judgement': '-',
                 'name': i,
                 'nr': i,
                 'stars_comment': 'niet beschikbaar'
