@@ -79,7 +79,7 @@ class EsfConfigurationArchiveView(AppView):
         if not hasattr(self, '_history'):
             self._history = get_history(
                 log_entry_id=self.log_entry_id,
-                include_data=False,
+                include_data=True,
             )
         return self._history
     
