@@ -8,6 +8,7 @@ from lizard_ui.urls import debugmode_urlpatterns
 
 from lizard_esf.views import EsfConfigurationHistoryView
 from lizard_esf.views import EsfConfigurationArchiveView
+from lizard_esf.views import EsfMainEditor
 
 admin.autodiscover()
 
@@ -30,5 +31,9 @@ urlpatterns = patterns(
      EsfConfigurationArchiveView.as_view(),
      {},
      "lizard_esf.archive"),
+    (r'^main_esf_editor/$',
+     EsfMainEditor.as_view(),
+         {},
+     "lizard_esf.main_esf_editor"),
     )
 urlpatterns += debugmode_urlpatterns()

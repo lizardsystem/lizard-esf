@@ -22,6 +22,8 @@ from lizard_esf.api.views import ValueTypeView
 from lizard_esf.api.views import ConfigurationTypeRootView
 from lizard_esf.api.views import ConfigurationTypeView
 
+from lizard_esf.api.views import EsfScoreView
+
 admin.autodiscover()
 
 NAME_PREFIX = 'lizard_esf_api_'
@@ -58,6 +60,10 @@ urlpatterns = patterns(
     url(r'^value_type/(?P<pk>[0-9]+)/$',
         ValueTypeView.as_view(),
         name=NAME_PREFIX + 'value_type'),
+    url(r'^esf_score_overview/$',
+        EsfScoreView.as_view(),
+        name=NAME_PREFIX + 'esf_score_view'),
+
 
     #url(r'^area_configuration/$',
         #ListOrCreateModelView.as_view(resource=AreaConfigurationResource),

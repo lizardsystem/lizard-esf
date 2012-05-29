@@ -109,3 +109,31 @@ class EsfConfigurationArchiveView(AppView):
             EsfConfigurationArchiveView,
             self
         ).get(request, *args, **kwargs)
+
+
+class EsfMainEditor(AppView):
+    """
+    Readonly esf tree.
+    """
+    def object_id(self):
+        return self._object_id
+
+    def get(self, request, *args, **kwargs):
+        """
+        Return read only form for esf configuration corresponding to
+        specific log_entry.
+        """
+
+        if request.user.is_authenticated():
+            self.template_name = 'lizard_esf/main_esf_editor.js'
+            print request.GET.get('object_id',None)
+            self._object_id = request.GET.get('object_id',None)
+            # For the special case of esf trees, the area_ident is
+            # stored in the object_repr field of the log_entry.
+            #self.area_ident = self.history()['object_repr']
+        else:
+            self.template_name = 'portals/geen_toegang.js'
+        return super(
+            EsfMainEditor,
+            self
+        ).get(request, *args, **kwargs)

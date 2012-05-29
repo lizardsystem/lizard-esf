@@ -15,11 +15,14 @@ from lizard_esf.models import Configuration
 from lizard_esf.models import AreaConfiguration
 from lizard_esf.models import ValueType
 from lizard_esf.models import ConfigurationType
+from lizard_esf.models import get_data_main_esf
 
 from lizard_esf.forms import ConfigurationForm
 from lizard_esf.forms import NameForm
 
 from lizard_area.models import Area
+
+from lizard_api.base import BaseApiView
 
 import json
 
@@ -129,13 +132,14 @@ class ConfigurationTreeView(View):
         area =  request.GET.get('object_id', None)
         area = Area.objects.get(ident=area)
         configs = Configuration.objects.exclude(esf_areaconfiguration_set__area=area)
+        only_main_esf = request.GET.get('only_main_esf', False)
 
         # Why are AreaConfiguration objects created here?
         # print('%i nieuwe configs voor dit gebied'%configs.count())
         for config in configs:
             AreaConfiguration.objects.get_or_create(configuration=config, area=area)
 
-        return AreaConfiguration.dump_tree(area=area)
+        return AreaConfiguration.dump_tree(area=area, only_main_esf=only_main_esf)
 
     def post(self, request, pk=None):
         if request.user.is_anonymous():
@@ -271,3 +275,68 @@ class ConfigurationTypeView(DocumentView):
     """
     document = ConfigurationType
     form = NameForm
+
+
+class EsfScoreView(BaseApiView):
+    """
+
+    """
+    model_class = Area
+    name_field = 'name'
+
+    valid_field='is_active'
+    valid_value=True
+
+    field_mapping = {
+        'id': 'id',
+        'name': 'name',
+        }
+
+    read_only_fields = [
+        'id',
+        'name',
+        ]
+
+    def get_object_for_api(self,
+                           area,
+                           flat=True,
+                           size=BaseApiView.COMPLETE,
+                           include_geom=False):
+        """
+        create object of measure
+        """
+        if size == self.ID_NAME:
+            output = {
+                'id': area.id,
+                'name': area.name,
+                }
+        else:
+            esf_scores = get_data_main_esf(area)
+
+            output = {
+                'id': area.id,
+                'ident': area.ident,
+                'name': area.name,
+                'esf1': esf_scores[0]['judgement'],
+                'esf2': esf_scores[1]['judgement'],
+                'esf3': esf_scores[2]['judgement'],
+                'esf4': esf_scores[3]['judgement'],
+                'esf5': esf_scores[4]['judgement'],
+                'esf6': esf_scores[5]['judgement'],
+                'esf7': esf_scores[6]['judgement'],
+                'esf8': esf_scores[7]['judgement'],
+                'esf9': esf_scores[8]['judgement'],
+                }
+        return output
+
+    def create_objects(self, data):
+        """
+            overwrite of base api to append code
+        """
+        success, touched_objects =  super(OrganizationView, self).create_objects(data)
+
+        for object in touched_objects:
+            object.code = object.id + 1000
+            object.save()
+
+        return success, touched_objects

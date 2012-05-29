@@ -385,7 +385,7 @@ class AreaConfiguration(models.Model):
         return output
 
     @classmethod
-    def dump_tree(cls, area):
+    def dump_tree(cls, area, only_main_esf=False):
         """
         Dump tree of config and children for a specific area as dict.
         """
@@ -402,6 +402,8 @@ class AreaConfiguration(models.Model):
 
         area_configs = cls.objects.filter(area=area).order_by(
             'configuration__path')
+        if only_main_esf:
+            area_configs = area_configs.filter(configuration__is_main_esf__isnull=False)
         config_dict = {}
 
         # Put all nodes from area_configs into config_dict
