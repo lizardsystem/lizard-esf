@@ -289,6 +289,7 @@ class EsfScoreView(BaseApiView):
 
     field_mapping = {
         'id': 'id',
+        'ident': 'ident',
         'name': 'name',
         }
 
@@ -317,15 +318,15 @@ class EsfScoreView(BaseApiView):
                 'id': area.id,
                 'ident': area.ident,
                 'name': area.name,
-                'esf1': esf_scores[0]['judgement'],
-                'esf2': esf_scores[1]['judgement'],
-                'esf3': esf_scores[2]['judgement'],
-                'esf4': esf_scores[3]['judgement'],
-                'esf5': esf_scores[4]['judgement'],
-                'esf6': esf_scores[5]['judgement'],
-                'esf7': esf_scores[6]['judgement'],
-                'esf8': esf_scores[7]['judgement'],
-                'esf9': esf_scores[8]['judgement'],
+                'esf1': esf_scores[0]['jname'],
+                'esf2': esf_scores[1]['jname'],
+                'esf3': esf_scores[2]['jname'],
+                'esf4': esf_scores[3]['jname'],
+                'esf5': esf_scores[4]['jname'],
+                'esf6': esf_scores[5]['jname'],
+                'esf7': esf_scores[6]['jname'],
+                'esf8': esf_scores[7]['jname'],
+                'esf9': esf_scores[8]['jname'],
                 }
         return output
 

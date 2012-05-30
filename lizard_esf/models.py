@@ -526,7 +526,7 @@ def get_data_main_esf(area):
                     if ts.count() > 0:
                         try:
                             event = ts[0].get_latest_event()
-                            rec['stars'] = event.value
+                            rec['stars'] = int(event.value)
                         except Exception:
                             rec['stars'] = None
                     else:
@@ -542,10 +542,13 @@ def get_data_main_esf(area):
                 rec['stars_comment'] = 'niet beschikbaar'
 
         if rec['value'] == 1:
+            rec['jname'] = 'Kritisch'
             rec['judgement'] = 'critical'
         elif rec['value'] == 2:
+            rec['jname'] = 'OK'
             rec['judgement'] = 'ok'
         else:
+            rec['jname'] = '-'
             rec['judgement'] = 'novalue'
         #critical
         data[config.configuration.is_main_esf] = rec
@@ -556,6 +559,7 @@ def get_data_main_esf(area):
             output.append(data[i])
         else:
             output.append({
+                'jname': '-',
                 'judgement': '-',
                 'name': i,
                 'nr': i,
