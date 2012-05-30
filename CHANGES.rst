@@ -5,7 +5,7 @@ Changelog of lizard-esf
 0.24 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- changed look and feel esf-overview
 
 
 0.23 (2012-05-29)
