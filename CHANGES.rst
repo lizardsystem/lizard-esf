@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.23 (unreleased)
+0.23 (2012-05-29)
 -----------------
 
 - fix in values for ESF overview (pp 325)
