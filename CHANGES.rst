@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.25 (unreleased)
+0.25 (2012-05-31)
 -----------------
 
 - Improved esf auto_value checking by adding "is not None".
