@@ -9,6 +9,10 @@ Changelog of lizard-esf
 
 - Added task 'import_dbf_all' to import all esftypes at once.
 
+- Added functionality to remove rejected configuration on validation.
+
+- Improved logging of celery tasks.
+
 
 0.24 (2012-05-30)
 -----------------

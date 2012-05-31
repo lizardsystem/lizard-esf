@@ -28,7 +28,6 @@ class DBFImporter(object):
         self.data_set = ""
         self.esftype = ""
         self.logger = logger
-        self.action = 1
         if self.logger is None:
             self.logger = logging.getLogger(__name__)
 
@@ -41,6 +40,7 @@ class DBFImporter(object):
             self.logger.warning(
                 "Stop validation, esf_type is an empty string.")
             return
+        self.remove_rejected_configurations()
         v_configs = self._configurations()
         if v_configs.exists() == False:
             self.logger.warning(
@@ -64,6 +64,17 @@ class DBFImporter(object):
                     dbf_instance.close()
         else:
             self.logger.warning("UNKOWN esf type.")
+
+    def remove_rejected_configurations(self):
+        """Remove rejected configurations from ConfigurationToValidate."""
+        options = {"data_set__name": self.data_set,
+                   "config_type": self.esftype,
+                   "action": ConfigurationToValidate.REJECT}
+        count = ConfigurationToValidate.objects.filter(**options).count()
+        self.logger.info("%d rejected configuration(s) to delete." % count)
+        if count > 0:
+            ConfigurationToValidate.objects.filter(**options).delete()
+            self.logger.info("%d configuration(s) deleted." % count)
 
     def validation_status(self, status_tuple, v_config):
         """Remove validation object on success or change
@@ -102,7 +113,7 @@ class DBFImporter(object):
         configs = ConfigurationToValidate.objects.filter(
             data_set__name=self.data_set,
             config_type=self.esftype,
-            action=self.action)
+            action=ConfigurationToValidate.VALIDATE)
         configs = configs.exclude(file_path=None)
         return configs
 

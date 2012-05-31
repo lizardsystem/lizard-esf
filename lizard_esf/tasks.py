@@ -14,7 +14,6 @@ from lizard_esf.models import DBFConfiguration
 from lizard_esf.export_dbf import DBFExporter
 from lizard_esf.models import DbfFile
 
-from lizard_task.handler import get_handler
 from lizard_task.task import task_logging
 
 
