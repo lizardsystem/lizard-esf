@@ -7,6 +7,8 @@ Changelog of lizard-esf
 
 - Improved esf auto_value checking by adding "is not None".
 
+- Added task 'import_dbf_all' to import all esftypes at once.
+
 
 0.24 (2012-05-30)
 -----------------

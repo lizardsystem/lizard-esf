@@ -12,8 +12,10 @@ from celery.task import task
 from lizard_esf.import_dbf import DBFImporter
 from lizard_esf.models import DBFConfiguration
 from lizard_esf.export_dbf import DBFExporter
+from lizard_esf.models import DbfFile
 
 from lizard_task.handler import get_handler
+from lizard_task.task import task_logging
 
 
 def get_logger(handler, taskname, levelno):
@@ -25,6 +27,27 @@ def get_logger(handler, taskname, levelno):
 
 
 @task()
+@task_logging
+def import_dbf_all(taskname="",
+                   data_set=None,
+                   username=None,
+                   levelno=20):
+    """
+    Import esf configurations from dbf.
+    """
+    logger = logging.getLogger(taskname)
+    dbffiles = DbfFile.objects.all()
+    for dbffile in dbffiles:
+        dbfimporter = DBFImporter(logger)
+        dbfimporter.esftype = dbffile.name
+        dbfimporter.data_set = data_set
+        logger.info("Start import of '%s'." % dbffile.name)
+        dbfimporter.run()
+    logger.info("END IMPORT.")
+
+
+@task()
+@task_logging
 def import_dbf(taskname="",
                username=None,
                levelno=20,
@@ -33,9 +56,7 @@ def import_dbf(taskname="",
     """
     Import esf configurations from dbf.
     """
-    handler = get_handler(taskname, username)
-    logger = get_logger(handler, taskname, levelno)
-
+    logger = logging.getLogger(taskname)
     dbfimporter = DBFImporter(logger)
     dbfimporter.esftype = esftype
     dbfimporter.data_set = data_set
@@ -43,11 +64,9 @@ def import_dbf(taskname="",
     dbfimporter.run()
     logger.info("END IMPORT.")
 
-    logger.removeHandler(handler)
-    return "<<import dbf>>"
-
 
 @task()
+@task_logging
 def export_esf_to_dbf(
     data_set=None,
     levelno=20,
@@ -56,8 +75,7 @@ def export_esf_to_dbf(
     """
     Export esf configurations into dbf.
     """
-    handler = get_handler(taskname, username)
-    logger = get_logger(handler, taskname, levelno)
+    logger = logging.getLogger(taskname)
     dbfexporter = DBFExporter(logger)
     dbf_configurations = DBFConfiguration.objects.filter(enabled=True)
     if data_set is not None:
@@ -74,7 +92,6 @@ def export_esf_to_dbf(
             owner, save_to, dbf_file, filename)
         logger.info("End export '%s' for '%s'." % (dbf_file, owner))
     logger.info("END EXPORT.")
-    logger.removeHandler(handler)
 
 
 def run_export_esf_to_dbf():
