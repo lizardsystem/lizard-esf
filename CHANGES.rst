@@ -5,8 +5,7 @@ Changelog of lizard-esf
 0.25 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- fix for histlory page in ie
 
 0.24 (2012-05-30)
 -----------------
