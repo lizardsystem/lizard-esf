@@ -10,6 +10,7 @@
       <tr>
         <td>Gebruiker</td>
         <td>Registratie</td>
+        <td>Samenvatting</td>
         <td></td>
       </tr>
     </thead>
@@ -18,6 +19,7 @@
       <tr>
         <td>{{h.user}}</td>
         <td>{{h.datetime|format_date_string}}</td>
+        <td>{{h.summary}}</td>
         <td>
           <a href="javascript:Ext.getCmp('portalWindow').linkToPopup(
             'Archiefexemplaar van ESF-configuratie',
