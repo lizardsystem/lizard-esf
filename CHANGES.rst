@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.26.2 (unreleased)
+0.26.2 (2012-06-06)
 -------------------
 
 - Put edit_message from request on object when saving.
