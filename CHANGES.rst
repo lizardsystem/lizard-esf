@@ -2,7 +2,7 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.26 (unreleased)
+0.26 (2012-06-06)
 -----------------
 
 - fix for histlory page in ie
