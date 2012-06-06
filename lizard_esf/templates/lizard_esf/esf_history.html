@@ -21,7 +21,7 @@
         <td>{{h.datetime|format_date_string}}</td>
         <td>{{h.summary}}</td>
         <td>
-          <a href="javascript:Ext.getCmp('portalWindow').linkToPopup(
+          <a href="javascript:void(0)" onclick="javascript:Ext.getCmp('portalWindow').linkToPopup(
             'Archiefexemplaar van ESF-configuratie',
             '/esf/archive/{{h.log_entry_id}}',
             {},
@@ -30,7 +30,7 @@
             'component',
             false,
             true
-            )">Archiefexemplaar</a>
+            );">Archiefexemplaar</a>
         </td>
       </tr>
       {% endfor %}

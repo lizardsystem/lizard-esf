@@ -2,11 +2,16 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.26 (unreleased)
+0.27 (unreleased)
 -----------------
 
 - Bring summary column back for esf history.
 
+
+0.26 (2012-06-06)
+-----------------
+
+- fix for histlory page in ie
 
 0.25 (2012-05-31)
 -----------------
