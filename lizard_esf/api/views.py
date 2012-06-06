@@ -162,6 +162,10 @@ class ConfigurationTreeView(View):
                         key = 'manual_text_value'
 
                 setattr(area_config, key, value)
+
+            edit_message = self.CONTENT.get('edit_message', None)
+            if edit_message is not None:
+                area_config.lizard_history_summary = edit_message
             area_config.save()
 
         return {'success': True}
