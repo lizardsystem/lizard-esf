@@ -2,10 +2,22 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.25 (unreleased)
+0.26 (unreleased)
 -----------------
 
 - fix for histlory page in ie
+
+0.25 (2012-05-31)
+-----------------
+
+- Improved esf auto_value checking by adding "is not None".
+
+- Added task 'import_dbf_all' to import all esftypes at once.
+
+- Added functionality to remove rejected configuration on validation.
+
+- Improved logging of celery tasks.
+
 
 0.24 (2012-05-30)
 -----------------

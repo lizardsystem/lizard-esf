@@ -510,8 +510,7 @@ def get_data_main_esf(area):
             # Why "get_auto_value" if get_mydump does exactly what's needed?
             config_dump = config.get_mydump([config])
 
-            # I *think* this determines auto/manual, not "is_manual"
-            if config_dump['auto_value']:
+            if config_dump['auto_value'] is not None:
                 rec['value'] = config_dump['auto_value']
                 rec['source'] = 'auto'
                 rec['source_info'] = ''  # + configurationdate?
