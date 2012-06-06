@@ -2,8 +2,8 @@ Changelog of lizard-esf
 ===================================================
 
 
-0.27 (unreleased)
------------------
+0.26.1 (2012-06-06)
+-------------------
 
 - Bring summary column back for esf history.
 
